@@ -6,13 +6,11 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.YTrollman.CreativeApiary.CreativeApiary;
 import com.YTrollman.CreativeApiary.container.ValidatedCreativeApiaryContainer;
 import com.YTrollman.CreativeApiary.network.CreativeExportBeeMessage;
 import com.YTrollman.CreativeApiary.network.CreativeImportBeeMessage;
 import com.YTrollman.CreativeApiary.network.CreativeNetPacketHandler;
 import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity;
-import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity.CreativeApiaryBee;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.resourcefulbees.resourcefulbees.ResourcefulBees;
 import com.resourcefulbees.resourcefulbees.client.gui.widget.TabImageButton;
@@ -70,7 +68,6 @@ public class ValidatedCreativeApiaryScreen extends ContainerScreen<ValidatedCrea
         importButton = this.addButton(new Button(this.leftPos + 73, this.topPos + 10, 40, 20, new StringTextComponent(I18n.get("gui.resourcefulbees.apiary.button.import")), onPress -> this.importBee()));
         exportButton = this.addButton(new Button(this.leftPos + 159, this.topPos + 10, 40, 20, new StringTextComponent(I18n.get("gui.resourcefulbees.apiary.button.export")), onPress -> this.exportSelectedBee()));
 
-        CreativeApiary.LOGGER.info("asdasdasdasd");
         addTabButtons();
 
 
@@ -211,7 +208,7 @@ public class ValidatedCreativeApiaryScreen extends ContainerScreen<ValidatedCrea
 
             if (mouseX >= left && mouseY >= i1 && mouseX < left + 16 && mouseY < i1 + 18) {
                 List<ITextComponent> beeInfo = new ArrayList<>();
-                CreativeApiaryBee apiaryBee = this.menu.getApiaryBee(i);
+                CreativeApiaryTileEntity.CreativeApiaryBee apiaryBee = this.menu.getApiaryBee(i);
 
                 int ticksInHive = apiaryBee.getTicksInHive();
                 int minTicks = apiaryBee.minOccupationTicks;

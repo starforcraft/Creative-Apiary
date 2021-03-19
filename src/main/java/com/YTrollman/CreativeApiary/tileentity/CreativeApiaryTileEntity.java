@@ -9,12 +9,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.resourcefulbees.resourcefulbees.block.multiblocks.apiary.ApiaryStorageBlock;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryStorageTileEntity;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryTileEntity;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import com.YTrollman.CreativeApiary.block.CreativeApiaryBlock;
-import com.YTrollman.CreativeApiary.block.CreativeApiaryStorageBlock;
 import com.YTrollman.CreativeApiary.container.UnvalidatedCreativeApiaryContainer;
 import com.YTrollman.CreativeApiary.container.ValidatedCreativeApiaryContainer;
 import com.YTrollman.CreativeApiary.network.CreativeNetPacketHandler;
@@ -53,7 +53,6 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -76,7 +75,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     public static final int EXPORT = 2;
     public static final int EMPTY_JAR = 1;
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	public final Map<String, CreativeApiaryTileEntity.CreativeApiaryBee> bees = new LinkedHashMap();
+    public final Map<String, CreativeApiaryTileEntity.CreativeApiaryBee> bees = new LinkedHashMap();
     private final List<BlockPos> structureBlocks = new ArrayList<>();
     protected int tier;
     private boolean isValidApiary;
@@ -95,9 +94,9 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     protected int ticksSinceBeesFlagged;
 
     public CreativeApiaryTileEntity() {
-    	super(); //ModTileEntityTypes.CREATIVE_APIARY_TILE_ENTITY.get()
+        super(ModTileEntityTypes.CREATIVE_APIARY_TILE_ENTITY.get()); //ModTileEntityTypes.CREATIVE_APIARY_TILE_ENTITY.get()
     }
-    
+
     //region PLAYER SYNCING
     public static int calculatePlayersUsingSync(World world, CreativeApiaryTileEntity apiaryTileEntity, int ticksSinceSync, int posX, int posY, int posZ, int numPlayersUsing) {
         if (!world.isClientSide && numPlayersUsing != 0 && (ticksSinceSync + posX + posY + posZ) % 200 == 0) {
@@ -610,7 +609,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     private boolean validateBlocks(AtomicBoolean isStructureValid, World worldIn, @Nullable ServerPlayerEntity validatingPlayer) {
         structureBlocks.forEach(pos -> {
             Block block = worldIn.getBlockState(pos).getBlock();
-            if (block.is(BeeInfoUtils.getValidApiaryTag()) || block instanceof ApiaryBreederBlock || block instanceof CreativeApiaryStorageBlock || block instanceof CreativeApiaryBlock) {
+            if (block.is(BeeInfoUtils.getValidApiaryTag()) || block instanceof ApiaryBreederBlock || block instanceof ApiaryStorageBlock || block instanceof CreativeApiaryBlock) {
                 TileEntity tile = worldIn.getBlockEntity(pos);
                 linkStorageAndBreeder(tile);
             } else {
@@ -769,10 +768,10 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
         this.previewed = previewed;
     }
 
-    /*@NotNull
+    @NotNull
     public CreativeApiaryTileEntity.TileStackHandler getTileStackHandler2() {
         return this.tileStackHandler;
-    }*/
+    }
 
     public LazyOptional<IItemHandler> getLazyOptional() {
         return lazyOptional;

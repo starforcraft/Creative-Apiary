@@ -16,7 +16,4 @@ public class ModTileEntityTypes {
     public static final RegistryObject<TileEntityType<?>> CREATIVE_APIARY_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_apiary", () -> TileEntityType.Builder
             .of(CreativeApiaryTileEntity::new, ModBlocks.TCREATIVE_APIARY_BLOCK.get())
             .build(null));
-    public static final RegistryObject<TileEntityType<?>> CREATIVE_APIARY_STORAGE_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_apiary_storage", () -> TileEntityType.Builder
-            .of(CreativeApiaryStorageTileEntity::new, ModBlocks.CREATIVE_APIARY_STORAGE_BLOCK.get())
-            .build(null));
 }

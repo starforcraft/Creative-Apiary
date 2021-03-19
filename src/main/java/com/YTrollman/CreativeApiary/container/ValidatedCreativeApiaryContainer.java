@@ -16,7 +16,6 @@ import com.YTrollman.CreativeApiary.network.CreativeLockBeeMessage;
 import com.YTrollman.CreativeApiary.network.CreativeNetPacketHandler;
 import com.YTrollman.CreativeApiary.registry.ModContainers;
 import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity;
-import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity.CreativeApiaryBee;
 import com.resourcefulbees.resourcefulbees.container.OutputSlot;
 import com.resourcefulbees.resourcefulbees.container.SlotItemHandlerUnconditioned;
 
@@ -130,7 +129,7 @@ public class ValidatedCreativeApiaryContainer extends Container {
 
     public int getSelectedBee() { return this.selectedBee.get(); }
 
-    public CreativeApiaryBee getApiaryBee(int i) {
+    public CreativeApiaryTileEntity.CreativeApiaryBee getApiaryBee(int i) {
         return getApiaryTileEntity().bees.get(getBeeList()[i]);
     }
 

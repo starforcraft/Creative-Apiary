@@ -1,6 +1,5 @@
 package com.YTrollman.CreativeApiary.init;
 
-import com.YTrollman.CreativeApiary.gui.CreativeApiaryStorageScreen;
 import com.YTrollman.CreativeApiary.gui.UnvalidatedCreativeApiaryScreen;
 import com.YTrollman.CreativeApiary.gui.ValidatedCreativeApiaryScreen;
 import com.YTrollman.CreativeApiary.registry.ModContainers;
@@ -19,6 +18,5 @@ public class ClientEventHandler {
     {
         ScreenManager.register(ModContainers.VALIDATED_CREATIVE_APIARY_CONTAINER.get(), ValidatedCreativeApiaryScreen::new);
         ScreenManager.register(ModContainers.UNVALIDATED_CREATIVE_APIARY_CONTAINER.get(), UnvalidatedCreativeApiaryScreen::new);
-        ScreenManager.register(ModContainers.CREATIVE_APIARY_STORAGE_CONTAINER.get(), CreativeApiaryStorageScreen::new);
     }
 }
