@@ -1,0 +1,16 @@
+{
+  "type": "resourcefulbees:hive_upgrade_recipe",
+  "pattern": [
+    "NAN",
+    "AHA",
+    "NAN"
+  ],
+  "key": {
+    "N": { "item": "minecraft:dragon_head" },
+    "A": { "item": "creativeapiary:tcreative_apiary" },
+    "H": { "tag": "resourcefulbees:resourceful_honeycomb_block"}
+  },
+  "result": {
+    "item": "creativeapiary:tcreative_apiary"
+  }
+}

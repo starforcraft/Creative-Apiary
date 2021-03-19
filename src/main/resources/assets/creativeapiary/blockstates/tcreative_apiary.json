@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=north,validated=false": {
+      "model": "creativeapiary:block/tcreative_apiary"
+    },
+    "facing=south,validated=false": {
+      "model": "creativeapiary:block/tcreative_apiary", "y": 180
+    },
+    "facing=west,validated=false": {
+      "model": "creativeapiary:block/tcreative_apiary", "y": 270
+    },
+    "facing=east,validated=false": {
+      "model": "creativeapiary:block/tcreative_apiary", "y": 90
+    },
+    "facing=north,validated=true": {
+      "model": "creativeapiary:block/tcreative_apiary_validated"
+    },
+    "facing=south,validated=true": {
+      "model": "creativeapiary:block/tcreative_apiary_validated", "y": 180
+    },
+    "facing=west,validated=true": {
+      "model": "creativeapiary:block/tcreative_apiary_validated", "y": 270
+    },
+    "facing=east,validated=true": {
+      "model": "creativeapiary:block/tcreative_apiary_validated", "y": 90
+    }
+  }
+}
