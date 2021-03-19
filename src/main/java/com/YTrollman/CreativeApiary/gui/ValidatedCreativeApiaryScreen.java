@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
 import com.YTrollman.CreativeApiary.container.ValidatedCreativeApiaryContainer;
 import com.YTrollman.CreativeApiary.network.CreativeExportBeeMessage;
 import com.YTrollman.CreativeApiary.network.CreativeImportBeeMessage;
@@ -161,10 +162,10 @@ public class ValidatedCreativeApiaryScreen extends ContainerScreen<ValidatedCrea
                 this.menu.selectBee(0);
             }
             exportButton.active = this.menu.getSelectedBee() != -1;
-            importButton.active = apiaryTileEntity.getBeeCount() < Config.APIARY_MAX_BEES.get();
+            importButton.active = apiaryTileEntity.getBeeCount() < CreativeApiaryConfig.TCREATIVE_APIARY_MAX_BEES.get();
 
             breedTabButton.active = apiaryTileEntity.getApiaryBreeder() != null;
-            storageTabButton.active = apiaryTileEntity.getApiaryStorage() != null;
+            storageTabButton.active = apiaryTileEntity.getApiaryStorage2() != null;
 
             this.menu.setBeeList(Arrays.copyOf(apiaryTileEntity.bees.keySet().toArray(), apiaryTileEntity.getBeeCount(), String[].class));
             this.minecraft.getTextureManager().bind(VALIDATED_TEXTURE);
@@ -190,7 +191,7 @@ public class ValidatedCreativeApiaryScreen extends ContainerScreen<ValidatedCrea
 
     @Override
     protected void renderLabels(@Nonnull MatrixStack matrix, int mouseX, int mouseY) {
-        String s = String.format("(%1$s/%2$s) Bees", apiaryTileEntity.getBeeCount(), Config.APIARY_MAX_BEES.get());
+        String s = String.format("(%1$s/%2$s) Bees", apiaryTileEntity.getBeeCount(), CreativeApiaryConfig.TCREATIVE_APIARY_MAX_BEES.get());
         this.font.draw(matrix, s, 4, 7, 0x404040);
 
         for (Widget widget : this.buttons) {

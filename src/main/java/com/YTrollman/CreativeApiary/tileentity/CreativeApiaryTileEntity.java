@@ -9,8 +9,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.resourcefulbees.resourcefulbees.block.multiblocks.apiary.ApiaryStorageBlock;
-import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryStorageTileEntity;
+import com.YTrollman.CreativeApiary.CreativeApiary;
+import com.YTrollman.CreativeApiary.block.CreativeApiaryStorageBlock;
+import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
+import com.YTrollman.CreativeApiary.registry.ModBlocks;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryTileEntity;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -28,7 +30,6 @@ import com.resourcefulbees.resourcefulbees.item.BeeJar;
 import com.resourcefulbees.resourcefulbees.lib.ApiaryTabs;
 import com.resourcefulbees.resourcefulbees.lib.BeeConstants;
 import com.resourcefulbees.resourcefulbees.lib.NBTConstants;
-import com.resourcefulbees.resourcefulbees.registry.ModBlocks;
 import com.resourcefulbees.resourcefulbees.registry.ModItems;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.MultiBlockHelper;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryBreederTileEntity;
@@ -89,7 +90,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     private int ticksSinceSync;
     private BlockPos storagePos;
     private BlockPos breederPos;
-    private ApiaryStorageTileEntity apiaryStorage;
+    private CreativeApiaryStorageTileEntity apiaryStorage;
     private ApiaryBreederTileEntity apiaryBreeder;
     protected int ticksSinceBeesFlagged;
 
@@ -142,7 +143,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
     @Override
     public int getMaxBees() {
-        return Config.APIARY_MAX_BEES.get();
+        return CreativeApiaryConfig.TCREATIVE_APIARY_MAX_BEES.get();
     }
 
     @Override
@@ -150,12 +151,11 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
         return this.bees.size();
     }
 
-    @Override
-    public ApiaryStorageTileEntity getApiaryStorage() {
+    public CreativeApiaryStorageTileEntity getApiaryStorage2() {
         if (this.level != null && this.getStoragePos() != null) {
             TileEntity tile = this.level.getBlockEntity(this.getStoragePos());
-            if (tile instanceof ApiaryStorageTileEntity) {
-                return (ApiaryStorageTileEntity) tile;
+            if (tile instanceof CreativeApiaryStorageTileEntity) {
+                return (CreativeApiaryStorageTileEntity) tile;
             }
         }
 
@@ -207,7 +207,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                     vanillaBeeEntity.dropOffNectar();
 
                     if (!exportBee && isValidApiary(true)) {
-                        getApiaryStorage().deliverHoneycomb(((BeeEntity) entity), getTier());
+                        getApiaryStorage2().deliverHoneycomb(((BeeEntity) entity), getTier());
                     }
                 }
 
@@ -248,12 +248,12 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 type = ((ICustomBee) bee).getBeeType();
             }
 
-            if (!this.bees.containsKey(type) && this.bees.size() < getMaxBees()) {
+            if (!this.bees.containsKey(type) && this.bees.size() < this.getMaxBees()) {
                 bee.ejectPassengers();
                 CompoundNBT nbt = new CompoundNBT();
                 bee.save(nbt);
 
-                int maxTimeInHive = getMaxTimeInHive(BeeConstants.MAX_TIME_IN_HIVE);
+                int maxTimeInHive = getMaxTimeInHive(CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get());
                 if (bee instanceof ICustomBee) {
                     ICustomBee iCustomBee = (ICustomBee) bee;
                     maxTimeInHive = getMaxTimeInHive(iCustomBee.getBeeData().getMaxTimeInHive());
@@ -274,7 +274,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
                 ITextComponent displayName = bee.getName();
 
-                this.bees.computeIfAbsent(finalType, k -> new CreativeApiaryBee(nbt, ticksInHive, hasNectar ? finalMaxTimeInHive : MIN_HIVE_TIME, beeEntity.getSavedFlowerPos(), finalType, finalBeeColor, displayName));
+                this.bees.computeIfAbsent(finalType, k -> new CreativeApiaryBee(nbt, ticksInHive, hasNectar ? finalMaxTimeInHive : 1, beeEntity.getSavedFlowerPos(), finalType, finalBeeColor, displayName));
                 BlockPos pos = this.getBlockPos();
                 this.level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BEEHIVE_ENTER, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
@@ -293,14 +293,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     }
 
     private int getMaxTimeInHive(int timeInput) {
-        if (this.tier != 1) {
-            if (this.tier == 0) {
-                return (int) (timeInput * 1.05);
-            } else {
-                return (int) (timeInput * (1 - getTier() * .05));
-            }
-        }
-        return timeInput;
+        return (int) (timeInput * (1 - 100 * .05));
     }
 
     @Override
@@ -588,7 +581,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     @Override
     public boolean validateStructure(World worldIn, @Nullable ServerPlayerEntity validatingPlayer) {
         AtomicBoolean isStructureValid = new AtomicBoolean(true);
-        this.apiaryStorage = getApiaryStorage();
+        this.apiaryStorage = getApiaryStorage2();
         this.apiaryBreeder = getApiaryBreeder();
         validateLinks();
         isStructureValid.set(validateBlocks(isStructureValid, worldIn, validatingPlayer));
@@ -609,7 +602,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     private boolean validateBlocks(AtomicBoolean isStructureValid, World worldIn, @Nullable ServerPlayerEntity validatingPlayer) {
         structureBlocks.forEach(pos -> {
             Block block = worldIn.getBlockState(pos).getBlock();
-            if (block.is(BeeInfoUtils.getValidApiaryTag()) || block instanceof ApiaryBreederBlock || block instanceof ApiaryStorageBlock || block instanceof CreativeApiaryBlock) {
+            if (block.is(BeeInfoUtils.getValidApiaryTag()) || block instanceof ApiaryBreederBlock || block instanceof CreativeApiaryStorageBlock || block instanceof CreativeApiaryBlock) {
                 TileEntity tile = worldIn.getBlockEntity(pos);
                 linkStorageAndBreeder(tile);
             } else {
@@ -654,7 +647,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                     if (addedStorage) {
                         this.level.setBlockAndUpdate(pos, net.minecraft.block.Blocks.GLASS.defaultBlockState());
                     } else {
-                        this.level.setBlockAndUpdate(pos, ModBlocks.APIARY_STORAGE_BLOCK.get().defaultBlockState());
+                        this.level.setBlockAndUpdate(pos, ModBlocks.CREATIVE_APIARY_STORAGE_BLOCK.get().defaultBlockState());
                         addedStorage = true;
                     }
                 }
@@ -665,8 +658,8 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
     @Override
     public boolean linkStorageAndBreeder(TileEntity tile) {
-        if (tile instanceof ApiaryStorageTileEntity && apiaryStorage == null && ((ApiaryStorageTileEntity) tile).getApiaryPos() == null) {
-            apiaryStorage = (ApiaryStorageTileEntity) tile;
+        if (tile instanceof CreativeApiaryStorageTileEntity && apiaryStorage == null && ((CreativeApiaryStorageTileEntity) tile).getApiaryPos() == null) {
+            apiaryStorage = (CreativeApiaryStorageTileEntity) tile;
             setStoragePos(apiaryStorage.getBlockPos());
             apiaryStorage.setApiaryPos(this.worldPosition);
             if (level != null) {
@@ -729,7 +722,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     public void switchTab(ServerPlayerEntity player, ApiaryTabs tab) {
         if (level != null) {
             if (tab == ApiaryTabs.STORAGE) {
-                NetworkHooks.openGui(player, getApiaryStorage(), getStoragePos());
+                NetworkHooks.openGui(player, getApiaryStorage2(), getStoragePos());
             }
             if (tab == ApiaryTabs.BREED) {
                 NetworkHooks.openGui(player, getApiaryBreeder(), getBreederPos());
@@ -902,4 +895,5 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
             setChanged();
         }
     }
+    //tryenterhive, releaseBee
 }

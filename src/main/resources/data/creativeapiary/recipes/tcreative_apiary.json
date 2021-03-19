@@ -7,7 +7,7 @@
   ],
   "key": {
     "N": { "item": "minecraft:dragon_head" },
-    "A": { "item": "creativeapiary:tcreative_apiary" },
+    "A": { "item": "resourcefulbees:t4_apiary" },
     "H": { "tag": "resourcefulbees:resourceful_honeycomb_block"}
   },
   "result": {

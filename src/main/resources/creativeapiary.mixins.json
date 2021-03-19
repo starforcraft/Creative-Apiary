@@ -1,9 +1,0 @@
-{
-  "required": true,
-  "package": "com.YTrollman.CreativeApiary.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-	"MixinApiaryStorageTileEntity"
-  ],
-  "minVersion": "0.8"
-}

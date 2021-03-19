@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+      "all": "creativeapiary:block/creative_apiary_storage_side"
+  }
+}
