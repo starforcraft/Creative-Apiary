@@ -67,12 +67,10 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-@SuppressWarnings("deprecation")
 public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITickableTileEntity, INamedContainerProvider, IApiaryMultiblock {
     public static final int IMPORT = 0;
     public static final int EXPORT = 2;
     public static final int EMPTY_JAR = 1;
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public final Map<String, CreativeApiaryTileEntity.CreativeApiaryBee> bees = new LinkedHashMap();
     private final List<BlockPos> structureBlocks = new ArrayList<>();
     protected int tier;
@@ -296,7 +294,9 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     }
 
     private int getMaxTimeInHive(int timeInput) {
-        return (int) (timeInput * (1 - 100 * .05));
+        int number = (int) (BeeConstants.MAX_TIME_IN_HIVE * CreativeApiaryConfig.TCREATIVE_APIARY_MAX_TIME_IN_HIVE.get());
+        int number1 = BeeConstants.MAX_TIME_IN_HIVE - number;
+        return (int) (timeInput * (1 - 5 * .05) - number1);
     }
 
     @Override
