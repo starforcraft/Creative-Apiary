@@ -194,7 +194,7 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         switch (apiaryTier) {
 	        case 100:
 	            itemstack = (CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get() == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
-                itemstack.setCount(CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT_AMOUNT.get());
+                itemstack.setCount(CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
                 break;
             case 8:
                 itemstack = (Config.T4_APIARY_OUTPUT.get() == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();

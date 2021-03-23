@@ -8,7 +8,6 @@ import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 public class CreativeApiaryConfig {
 
     public static EnumValue<ApiaryOutput> TCREATIVE_APIARY_OUTPUT;
-    public static ForgeConfigSpec.IntValue TCREATIVE_APIARY_OUTPUT_AMOUNT;
     public static ForgeConfigSpec.IntValue TCREATIVE_APIARY_QUANTITY;
     public static ForgeConfigSpec.IntValue TCREATIVE_APIARY_MAX_BEES;
     public static ForgeConfigSpec.DoubleValue TCREATIVE_APIARY_MAX_TIME_IN_HIVE;
@@ -21,12 +20,9 @@ public class CreativeApiaryConfig {
             TCREATIVE_APIARY_OUTPUT = client
             		.comment("\nTier Creative Apiary Output")
                     .defineEnum("tierCreativeApiaryOutput", ApiaryOutput.BLOCK, ApiaryOutput.BLOCK, ApiaryOutput.BLOCK);
-            TCREATIVE_APIARY_OUTPUT_AMOUNT = client
-                    .comment("\nTier Creative Apiary Output Amount")
-                    .defineInRange("tierCreativeApiaryOutputAmount", 100, 1, Integer.MAX_VALUE);
             TCREATIVE_APIARY_QUANTITY = client
-            		.comment("\nTier Creative Apiary Quantity")
-                    .defineInRange("tierCreativeApiaryQuantity", 1, 1, Integer.MAX_VALUE);
+            		.comment("\nTier Creative Apiary Quantity \n How many Combs/Blocks per Bees?")
+                    .defineInRange("tierCreativeApiaryQuantity", 100, 1, Integer.MAX_VALUE);
             TCREATIVE_APIARY_MAX_BEES = client
                     .comment("\nTier Creative Apiary Max Bees")
                     .defineInRange("tierCreativeApiaryMaxBees", 100, 1, Integer.MAX_VALUE);
