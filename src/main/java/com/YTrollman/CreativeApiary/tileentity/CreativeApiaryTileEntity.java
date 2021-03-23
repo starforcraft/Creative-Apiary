@@ -1,6 +1,5 @@
 package com.YTrollman.CreativeApiary.tileentity;
 
-import static com.resourcefulbees.resourcefulbees.lib.BeeConstants.MIN_HIVE_TIME;
 import static com.resourcefulbees.resourcefulbees.lib.BeeConstants.RAINBOW_COLOR;
 
 import java.util.*;
@@ -9,7 +8,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.YTrollman.CreativeApiary.CreativeApiary;
 import com.YTrollman.CreativeApiary.block.CreativeApiaryStorageBlock;
 import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
 import com.YTrollman.CreativeApiary.registry.ModBlocks;
@@ -24,7 +22,6 @@ import com.YTrollman.CreativeApiary.network.CreativeUpdateClientApiaryMessage;
 import com.YTrollman.CreativeApiary.registry.ModTileEntityTypes;
 import com.resourcefulbees.resourcefulbees.api.ICustomBee;
 import com.resourcefulbees.resourcefulbees.block.multiblocks.apiary.ApiaryBreederBlock;
-import com.resourcefulbees.resourcefulbees.config.Config;
 import com.resourcefulbees.resourcefulbees.container.AutomationSensitiveItemStackHandler;
 import com.resourcefulbees.resourcefulbees.item.BeeJar;
 import com.resourcefulbees.resourcefulbees.lib.ApiaryTabs;
@@ -253,7 +250,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 CompoundNBT nbt = new CompoundNBT();
                 bee.save(nbt);
 
-                int maxTimeInHive = getMaxTimeInHive(CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get());
+                int maxTimeInHive = getMaxTimeInHive(BeeConstants.MAX_TIME_IN_HIVE / CreativeApiaryConfig.TCREATIVE_APIARY_MAX_TIME_IN_HIVE.get());
                 if (bee instanceof ICustomBee) {
                     ICustomBee iCustomBee = (ICustomBee) bee;
                     maxTimeInHive = getMaxTimeInHive(iCustomBee.getBeeData().getMaxTimeInHive());
@@ -274,7 +271,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
                 ITextComponent displayName = bee.getName();
 
-                this.bees.computeIfAbsent(finalType, k -> new CreativeApiaryBee(nbt, ticksInHive, hasNectar ? finalMaxTimeInHive : 1, beeEntity.getSavedFlowerPos(), finalType, finalBeeColor, displayName));
+                this.bees.computeIfAbsent(finalType, k -> new CreativeApiaryBee(nbt, ticksInHive, hasNectar ? finalMaxTimeInHive : BeeConstants.MIN_HIVE_TIME / CreativeApiaryConfig.TCREATIVE_APIARY_MIN_TIME_IN_HIVE.get(), beeEntity.getSavedFlowerPos(), finalType, finalBeeColor, displayName));
                 BlockPos pos = this.getBlockPos();
                 this.level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BEEHIVE_ENTER, SoundCategory.BLOCKS, 1.0F, 1.0F);
 

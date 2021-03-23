@@ -1,6 +1,7 @@
 {
 	"block.creativeapiary.tcreative_apiary": "Tier Creative Apiary",
 	"block.creativeapiary.creative_apiary_storage": "Creative Apiary Storage",
-	"block.creativeapiary.creative_apiary.tooltip.speed": "Instant",
-	"block.creativeapiary.creative_apiary.tooltip.required": "Du MUSST eine Creative Apiary Storage haben"
+	"block.creativeapiary.creative_apiary.tooltip.speed": "Max Zeit im Bienenstock: ",
+	"block.creativeapiary.creative_apiary.tooltip.required": "Du MUSST eine Creative Apiary Storage haben",
+	"block.creativeapiary.creative_apiary.tooltip.output_amount": "Ausgabemenge: "
 }
