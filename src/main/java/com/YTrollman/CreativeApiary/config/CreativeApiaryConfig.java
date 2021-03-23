@@ -11,8 +11,8 @@ public class CreativeApiaryConfig {
     public static ForgeConfigSpec.IntValue TCREATIVE_APIARY_OUTPUT_AMOUNT;
     public static ForgeConfigSpec.IntValue TCREATIVE_APIARY_QUANTITY;
     public static ForgeConfigSpec.IntValue TCREATIVE_APIARY_MAX_BEES;
-    public static ForgeConfigSpec.IntValue TCREATIVE_APIARY_MAX_TIME_IN_HIVE;
-    public static ForgeConfigSpec.IntValue TCREATIVE_APIARY_MIN_TIME_IN_HIVE;
+    public static ForgeConfigSpec.DoubleValue TCREATIVE_APIARY_MAX_TIME_IN_HIVE;
+    public static ForgeConfigSpec.DoubleValue TCREATIVE_APIARY_MIN_TIME_IN_HIVE;
 
     public static void init(ForgeConfigSpec.Builder client) {
 
@@ -31,10 +31,10 @@ public class CreativeApiaryConfig {
                     .comment("\nTier Creative Apiary Max Bees")
                     .defineInRange("tierCreativeApiaryMaxBees", 100, 1, Integer.MAX_VALUE);
             TCREATIVE_APIARY_MAX_TIME_IN_HIVE = client
-                    .comment("\nTier Creative Apiary Max Time in Hive (Value divides the default Resourceful Bees Apiary Value) \nDefault Tier 1-4 Apiary is 2400")
-                    .defineInRange("tierCreativeApiaryMaxTimeInHive", 100, 1, Integer.MAX_VALUE);
+                    .comment("\nTier Creative Apiary Max Time in Hive (Value in %) \nFor example 0.75= 75%")
+                    .defineInRange("tierCreativeApiaryMaxTimeInHive", 1D, 0D, 1D);
             TCREATIVE_APIARY_MIN_TIME_IN_HIVE = client
-                    .comment("\nTier Creative Apiary Min Time in Hive (Value divides the default Resourceful Bees Apiary Value) \nDefault Tier 1-4 Apiary is 600")
-                    .defineInRange("tierCreativeApiaryMinTimeInHive", 100, 1, Integer.MAX_VALUE);
+                    .comment("\nTier Creative Apiary Min Time in Hive (Value in %) \nFor example 0.75= 75%")
+                    .defineInRange("tierCreativeApiaryMinTimeInHive", 1D, 0D, 1D);
     }
 }

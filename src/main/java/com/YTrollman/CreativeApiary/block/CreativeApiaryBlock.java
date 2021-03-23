@@ -120,7 +120,10 @@ public class CreativeApiaryBlock extends ApiaryBlock {
           outputQuantity = (Integer) Config.T1_APIARY_QUANTITY.get();
       }
 
-      tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.speed") + (BeeConstants.MAX_TIME_IN_HIVE / CreativeApiaryConfig.TCREATIVE_APIARY_MAX_TIME_IN_HIVE.get()) + " tick(s)", TextFormatting.GOLD).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.required"), TextFormatting.GOLD).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.output_amount") + CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT_AMOUNT.get()).build());
+      int number = (int) (BeeConstants.MAX_TIME_IN_HIVE * CreativeApiaryConfig.TCREATIVE_APIARY_MAX_TIME_IN_HIVE.get());
+      int number2 = BeeConstants.MAX_TIME_IN_HIVE - number;
+
+      tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.speed") + (number2) + " tick(s)", TextFormatting.GOLD).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.required"), TextFormatting.GOLD).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.output_amount") + CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT_AMOUNT.get()).build());
     }
 
     super.appendHoverText(stack, worldIn, tooltip, flagIn);
