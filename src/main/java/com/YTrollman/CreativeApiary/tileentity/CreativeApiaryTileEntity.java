@@ -294,9 +294,16 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     }
 
     private int getMaxTimeInHive(int timeInput) {
-        int number = (int) (BeeConstants.MAX_TIME_IN_HIVE * CreativeApiaryConfig.TCREATIVE_APIARY_MAX_TIME_IN_HIVE.get());
-        int number1 = BeeConstants.MAX_TIME_IN_HIVE - number;
-        return (int) (timeInput * (1 - 5 * .05) - number1);
+        if (CreativeApiaryConfig.TCREATIVE_APIARY_MAX_TIME_IN_HIVE.get() == 1D)
+        {
+            return (int) (timeInput * (1 - 100 * .05));
+        }
+        else
+        {
+            int number = (int) (BeeConstants.MAX_TIME_IN_HIVE * CreativeApiaryConfig.TCREATIVE_APIARY_MAX_TIME_IN_HIVE.get());
+            int number1 = BeeConstants.MAX_TIME_IN_HIVE - number;
+            return (int) (timeInput * (1 - 5 * .05) - number1);
+        }
     }
 
     @Override
