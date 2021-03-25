@@ -10,8 +10,7 @@ public class CreativeApiaryConfig {
     public static EnumValue<ApiaryOutput> TCREATIVE_APIARY_OUTPUT;
     public static ForgeConfigSpec.IntValue TCREATIVE_APIARY_QUANTITY;
     public static ForgeConfigSpec.IntValue TCREATIVE_APIARY_MAX_BEES;
-    public static ForgeConfigSpec.DoubleValue TCREATIVE_APIARY_MAX_TIME_IN_HIVE;
-    public static ForgeConfigSpec.DoubleValue TCREATIVE_APIARY_MIN_TIME_IN_HIVE;
+    public static ForgeConfigSpec.DoubleValue TCREATIVE_APIARY_SPEED;
 
     public static void init(ForgeConfigSpec.Builder client) {
 
@@ -26,11 +25,8 @@ public class CreativeApiaryConfig {
             TCREATIVE_APIARY_MAX_BEES = client
                     .comment("\nTier Creative Apiary Max Bees")
                     .defineInRange("tierCreativeApiaryMaxBees", 100, 1, Integer.MAX_VALUE);
-            TCREATIVE_APIARY_MAX_TIME_IN_HIVE = client
-                    .comment("\nTier Creative Apiary Max Time in Hive (Value in %) \nFor example 0.75= 75%")
+            TCREATIVE_APIARY_SPEED = client
+                    .comment("\nTier Creative Apiary Max Time in Hive (Value in %) \nFor example 0.7 = 70% reduction")
                     .defineInRange("tierCreativeApiaryMaxTimeInHive", 1D, 0D, 1D);
-            TCREATIVE_APIARY_MIN_TIME_IN_HIVE = client
-                    .comment("\nTier Creative Apiary Min Time in Hive (Value in %) \nFor example 0.75= 75%")
-                    .defineInRange("tierCreativeApiaryMinTimeInHive", 1D, 0D, 1D);
     }
 }

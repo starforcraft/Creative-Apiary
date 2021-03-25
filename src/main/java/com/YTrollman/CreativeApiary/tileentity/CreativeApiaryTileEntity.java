@@ -1,13 +1,12 @@
 package com.YTrollman.CreativeApiary.tileentity;
 
-import static com.resourcefulbees.resourcefulbees.lib.BeeConstants.RAINBOW_COLOR;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.YTrollman.CreativeApiary.CreativeApiary;
 import com.YTrollman.CreativeApiary.block.CreativeApiaryStorageBlock;
 import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
 import com.YTrollman.CreativeApiary.registry.ModBlocks;
@@ -66,6 +65,8 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+
+import static com.resourcefulbees.resourcefulbees.lib.BeeConstants.*;
 
 public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITickableTileEntity, INamedContainerProvider, IApiaryMultiblock {
     public static final int IMPORT = 0;
@@ -248,10 +249,8 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 CompoundNBT nbt = new CompoundNBT();
                 bee.save(nbt);
 
-                int number = (int) (BeeConstants.MAX_TIME_IN_HIVE * CreativeApiaryConfig.TCREATIVE_APIARY_MAX_TIME_IN_HIVE.get());
-                int number2 = BeeConstants.MAX_TIME_IN_HIVE - number;
-
-                int maxTimeInHive = getMaxTimeInHive(number2);
+                int number = (int) (MAX_TIME_IN_HIVE * (1 - CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get()));
+                int maxTimeInHive = getMaxTimeInHive(number);
                 if (bee instanceof ICustomBee) {
                     ICustomBee iCustomBee = (ICustomBee) bee;
                     maxTimeInHive = getMaxTimeInHive(iCustomBee.getBeeData().getMaxTimeInHive());
@@ -272,10 +271,8 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
                 ITextComponent displayName = bee.getName();
 
-                int number3 = (int) (BeeConstants.MIN_HIVE_TIME * CreativeApiaryConfig.TCREATIVE_APIARY_MIN_TIME_IN_HIVE.get());
-                int number4 = BeeConstants.MIN_HIVE_TIME - number3;
-
-                this.bees.computeIfAbsent(finalType, k -> new CreativeApiaryBee(nbt, ticksInHive, hasNectar ? finalMaxTimeInHive : number4, beeEntity.getSavedFlowerPos(), finalType, finalBeeColor, displayName));
+                int number2 = (int) (MIN_HIVE_TIME * (1 - CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get()));
+                this.bees.computeIfAbsent(finalType, k -> new CreativeApiaryBee(nbt, ticksInHive, hasNectar ? finalMaxTimeInHive : number2, beeEntity.getSavedFlowerPos(), finalType, finalBeeColor, displayName));
                 BlockPos pos = this.getBlockPos();
                 this.level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BEEHIVE_ENTER, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
@@ -294,16 +291,9 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     }
 
     private int getMaxTimeInHive(int timeInput) {
-        if (CreativeApiaryConfig.TCREATIVE_APIARY_MAX_TIME_IN_HIVE.get() == 1D)
-        {
-            return (int) (timeInput * (1 - 100 * .05));
-        }
-        else
-        {
-            int number = (int) (BeeConstants.MAX_TIME_IN_HIVE * CreativeApiaryConfig.TCREATIVE_APIARY_MAX_TIME_IN_HIVE.get());
-            int number1 = BeeConstants.MAX_TIME_IN_HIVE - number;
-            return (int) (timeInput * (1 - 5 * .05) - number1);
-        }
+        int number = (int) (timeInput * (1 - CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get()));
+        CreativeApiary.LOGGER.info(number + " asd");
+        return (number);
     }
 
     @Override
