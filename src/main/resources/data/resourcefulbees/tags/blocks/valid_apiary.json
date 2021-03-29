@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "creativeapiary:tcreative_apiary",
-    "creativeapiary:creative_apiary_storage"
+    "creativeapiary:creative_apiary_storage",
+    "creativeapiary:creative_apiary_breeder"
   ]
 }

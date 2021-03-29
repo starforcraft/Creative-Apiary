@@ -1,5 +1,6 @@
 package com.YTrollman.CreativeApiary.registry;
 
+import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryBreederTileEntity;
 import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryStorageTileEntity;
 import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity;
 import com.resourcefulbees.resourcefulbees.ResourcefulBees;
@@ -18,5 +19,8 @@ public class ModTileEntityTypes {
             .build(null));
     public static final RegistryObject<TileEntityType<?>> CREATIVE_APIARY_STORAGE_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_apiary_storage", () -> TileEntityType.Builder
             .of(CreativeApiaryStorageTileEntity::new, ModBlocks.CREATIVE_APIARY_STORAGE_BLOCK.get())
+            .build(null));
+    public static final RegistryObject<TileEntityType<?>> CREATIVE_APIARY_BREEDER_TILE_ENTITY = TILE_ENTITY_TYPES.register("creative_apiary_breeder", () -> TileEntityType.Builder
+            .of(CreativeApiaryBreederTileEntity::new, ModBlocks.CREATIVE_APIARY_BREEDER_BLOCK.get())
             .build(null));
 }

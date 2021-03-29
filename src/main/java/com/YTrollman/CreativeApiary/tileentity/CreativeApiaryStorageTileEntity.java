@@ -82,7 +82,7 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
     @Nonnull
     @Override
     public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("gui.resourcefulbees.apiary_storage");
+        return new TranslationTextComponent("gui.creativeapiary.creative_apiary_storage");
     }
 
     @Nullable

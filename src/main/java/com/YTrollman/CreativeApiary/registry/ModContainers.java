@@ -1,6 +1,7 @@
 package com.YTrollman.CreativeApiary.registry;
 
 import com.YTrollman.CreativeApiary.CreativeApiary;
+import com.YTrollman.CreativeApiary.container.CreativeApiaryBreederContainer;
 import com.YTrollman.CreativeApiary.container.CreativeApiaryStorageContainer;
 import com.YTrollman.CreativeApiary.container.UnvalidatedCreativeApiaryContainer;
 import com.YTrollman.CreativeApiary.container.ValidatedCreativeApiaryContainer;
@@ -21,4 +22,6 @@ public class ModContainers {
             .create((id, inv, c) -> new ValidatedCreativeApiaryContainer(id, inv.player.level, c.readBlockPos(), inv)));
     public static final RegistryObject<ContainerType<CreativeApiaryStorageContainer>> CREATIVE_APIARY_STORAGE_CONTAINER = CONTAINER_TYPES.register("creative_apiary_storage", () -> IForgeContainerType
             .create((id, inv, c) -> new CreativeApiaryStorageContainer(id, inv.player.level, c.readBlockPos(), inv)));
+    public static final RegistryObject<ContainerType<CreativeApiaryBreederContainer>> CREATIVE_APIARY_BREEDER_CONTAINER = CONTAINER_TYPES.register("creative_apiary_breeder", () -> IForgeContainerType
+            .create((id, inv, c) -> new CreativeApiaryBreederContainer(id, inv.player.level, c.readBlockPos(), inv)));
 }

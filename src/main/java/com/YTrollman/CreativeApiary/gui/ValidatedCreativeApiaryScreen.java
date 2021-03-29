@@ -164,7 +164,7 @@ public class ValidatedCreativeApiaryScreen extends ContainerScreen<ValidatedCrea
             exportButton.active = this.menu.getSelectedBee() != -1;
             importButton.active = apiaryTileEntity.getBeeCount() < CreativeApiaryConfig.TCREATIVE_APIARY_MAX_BEES.get();
 
-            breedTabButton.active = apiaryTileEntity.getApiaryBreeder() != null;
+            breedTabButton.active = apiaryTileEntity.getApiaryBreeder2() != null;
             storageTabButton.active = apiaryTileEntity.getApiaryStorage2() != null;
 
             this.menu.setBeeList(Arrays.copyOf(apiaryTileEntity.bees.keySet().toArray(), apiaryTileEntity.getBeeCount(), String[].class));

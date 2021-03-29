@@ -1,0 +1,9 @@
+{
+  "parent": "block/orientable_with_bottom",
+  "textures": {
+    "bottom": "creativeapiary:block/creative_beehive_end",
+    "top": "creativeapiary:block/creative_beehive_end",
+    "front": "creativeapiary:block/creative_apiary_breeder_side",
+    "side": "creativeapiary:block/creative_apiary_breeder_side"
+  }
+}

@@ -28,7 +28,6 @@ import com.resourcefulbees.resourcefulbees.lib.BeeConstants;
 import com.resourcefulbees.resourcefulbees.lib.NBTConstants;
 import com.resourcefulbees.resourcefulbees.registry.ModItems;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.MultiBlockHelper;
-import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryBreederTileEntity;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.IApiaryMultiblock;
 import com.resourcefulbees.resourcefulbees.utils.BeeInfoUtils;
 
@@ -87,7 +86,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     private BlockPos storagePos;
     private BlockPos breederPos;
     private CreativeApiaryStorageTileEntity apiaryStorage;
-    private ApiaryBreederTileEntity apiaryBreeder;
+    private CreativeApiaryBreederTileEntity apiaryBreeder;
     protected int ticksSinceBeesFlagged;
 
     public CreativeApiaryTileEntity() {
@@ -159,12 +158,11 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
         return null;
     }
 
-    @Override
-    public ApiaryBreederTileEntity getApiaryBreeder() {
+    public CreativeApiaryBreederTileEntity getApiaryBreeder2() {
         if (level != null && getBreederPos() != null) {
             TileEntity tile = level.getBlockEntity(getBreederPos());
-            if (tile instanceof ApiaryBreederTileEntity) {
-                return (ApiaryBreederTileEntity) tile;
+            if (tile instanceof CreativeApiaryBreederTileEntity) {
+                return (CreativeApiaryBreederTileEntity) tile;
             }
         }
         setBreederPos(null);
@@ -292,7 +290,6 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
     private int getMaxTimeInHive(int timeInput) {
         int number = (int) (timeInput * (1 - CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get()));
-        CreativeApiary.LOGGER.info(number + " asd");
         return (number);
     }
 
@@ -582,7 +579,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     public boolean validateStructure(World worldIn, @Nullable ServerPlayerEntity validatingPlayer) {
         AtomicBoolean isStructureValid = new AtomicBoolean(true);
         this.apiaryStorage = getApiaryStorage2();
-        this.apiaryBreeder = getApiaryBreeder();
+        this.apiaryBreeder = getApiaryBreeder2();
         validateLinks();
         isStructureValid.set(validateBlocks(isStructureValid, worldIn, validatingPlayer));
 
@@ -668,8 +665,8 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
             return true;
         }
 
-        if (tile instanceof ApiaryBreederTileEntity && apiaryBreeder == null && ((ApiaryBreederTileEntity) tile).getApiaryPos() == null) {
-            apiaryBreeder = (ApiaryBreederTileEntity) tile;
+        if (tile instanceof CreativeApiaryBreederTileEntity && apiaryBreeder == null && ((CreativeApiaryBreederTileEntity) tile).getApiaryPos() == null) {
+            apiaryBreeder = (CreativeApiaryBreederTileEntity) tile;
             setBreederPos(apiaryBreeder.getBlockPos());
             apiaryBreeder.setApiaryPos(this.worldPosition);
             if (level != null) {
@@ -725,7 +722,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 NetworkHooks.openGui(player, getApiaryStorage2(), getStoragePos());
             }
             if (tab == ApiaryTabs.BREED) {
-                NetworkHooks.openGui(player, getApiaryBreeder(), getBreederPos());
+                NetworkHooks.openGui(player, getApiaryBreeder2(), getBreederPos());
             }
         }
     }
@@ -750,7 +747,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     @Nonnull
     @Override
     public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("gui.resourcefulbees.apiary");
+        return new TranslationTextComponent("gui.creativeapiary.creative_apiary");
     }
 
     public boolean isPreviewed() {
