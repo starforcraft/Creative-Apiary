@@ -188,7 +188,6 @@ public class CreativeApiaryBreederTileEntity extends TileEntity implements ITick
                 }
             }
         }
-
     }
 
     protected boolean canProcess(int slot) {
@@ -329,20 +328,6 @@ public class CreativeApiaryBreederTileEntity extends TileEntity implements ITick
         };
     }
 
-    /*protected void onContentsChanged(int slot) {
-        super.onContentsChanged(slot);
-        CreativeApiaryBreederTileEntity.this.setChanged();
-
-        for(int i = 0; i < 4; ++i) {
-            if (slot == CreativeApiaryBreederTileEntity.getUpgradeSlots()[i]) {
-                CreativeApiaryBreederTileEntity.this.tileStackHandler.updateNumberOfBreeders(this);
-                CreativeApiaryBreederTileEntity.this.tileStackHandler.rebuildOpenContainers();
-                CreativeApiaryBreederTileEntity.this.tileStackHandler.updateBreedTime(this);
-                break;
-            }
-        }
-    }*
-
     @Nullable
     public Container createMenu(int id, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity playerEntity) {
         return new CreativeApiaryBreederContainer(id, this.level, this.worldPosition, playerInventory, this.times);
@@ -391,11 +376,7 @@ public class CreativeApiaryBreederTileEntity extends TileEntity implements ITick
     }
 
     public class TileStackHandler extends AutomationSensitiveItemStackHandler {
-        private int maxSlots = 8;
-
-        public void setMaxSlots(int maxSlots) {
-            this.maxSlots = maxSlots;
-        }
+        private int maxSlots = 28;
 
         protected TileStackHandler(int slots) {
             super(slots);
@@ -499,23 +480,5 @@ public class CreativeApiaryBreederTileEntity extends TileEntity implements ITick
         private boolean isSlotVisible(int slot) {
             return slot <= this.maxSlots;
         }
-    }
-    private void updateNumberOfBreeders(ApiaryBreederTileEntity.TileStackHandler tileStackHandler) {
-        int count = 1;
-
-        for (int i = 0; i < 4; ++i) {
-            if (!tileStackHandler.getStackInSlot(ApiaryBreederTileEntity.getUpgradeSlots()[i]).isEmpty()) {
-                ItemStack upgradeItem = tileStackHandler.getStackInSlot(ApiaryBreederTileEntity.getUpgradeSlots()[i]);
-                if (UpgradeItem.isUpgradeItem(upgradeItem)) {
-                    CompoundNBT data = UpgradeItem.getUpgradeData(upgradeItem);
-                    if (data != null && data.getString("UpgradeType").equals("Breeder")) {
-                        count += (int) MathUtils.clamp(data.getFloat("BreederCount"), 0.0F, 5.0F);
-                    }
-                }
-            }
-        }
-
-        CreativeApiaryBreederTileEntity.this.setNumberOfBreeders(count);
-        tileStackHandler.setMaxSlots(3 + CreativeApiaryBreederTileEntity.this.breedersize * 5);
     }
 }
