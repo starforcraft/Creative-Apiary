@@ -4,6 +4,7 @@ import com.YTrollman.CreativeApiary.container.CreativeApiaryBreederContainer;
 import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryBreederTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.resourcefulbees.resourcefulbees.client.gui.widget.TabImageButton;
+import com.resourcefulbees.resourcefulbees.container.ApiaryBreederContainer;
 import com.resourcefulbees.resourcefulbees.lib.ApiaryTabs;
 import com.resourcefulbees.resourcefulbees.network.NetPacketHandler;
 import com.resourcefulbees.resourcefulbees.network.packets.ApiaryTabMessage;
@@ -128,12 +129,19 @@ public class CreativeApiaryBreederScreen extends ContainerScreen<CreativeApiaryB
                 this.blit(matrix, i + 25, j + 15 + t * 20, 25, 15, 176, 20);
             }
 
+            if (!(this.menu.getApiaryBreederTileEntity().getTotalTime() == 0))
+            {
+                for(t = 0; t < this.breedersize; ++t) {
+                    int scaledprogress = MathUtils.clamp(118 * this.menu.times.get(t) / this.menu.getApiaryBreederTileEntity().getTotalTime(), 0, this.menu.getApiaryBreederTileEntity().getTotalTime());
+                    this.blit(matrix, i + 54, j + 21 + t * 20, 0, 246, scaledprogress, 10);
+                }
+            }
+
             this.blit(matrix, i + 25, j + 15 + 20 * 5, 25, 95, 176, 95);
             t = i + this.imageWidth - 24;
             this.minecraft.getTextureManager().bind(TABS_BG);
             blit(matrix, t - 1, j + 12, 0.0F, 0.0F, 25, 68, 128, 128);
         }
-
     }
 
     protected void renderLabels(@Nonnull MatrixStack matrix, int mouseX, int mouseY) {

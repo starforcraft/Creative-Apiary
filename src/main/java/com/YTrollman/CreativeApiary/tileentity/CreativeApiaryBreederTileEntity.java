@@ -10,16 +10,13 @@ import com.resourcefulbees.resourcefulbees.container.AutomationSensitiveItemStac
 import com.resourcefulbees.resourcefulbees.container.AutomationSensitiveItemStackHandler.IRemover;
 import com.resourcefulbees.resourcefulbees.entity.passive.CustomBeeEntity;
 import com.resourcefulbees.resourcefulbees.item.BeeJar;
-import com.resourcefulbees.resourcefulbees.item.UpgradeItem;
 import com.resourcefulbees.resourcefulbees.lib.ApiaryTabs;
 import com.resourcefulbees.resourcefulbees.registry.BeeRegistry;
-import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryBreederTileEntity;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.IApiaryMultiblock;
 import com.resourcefulbees.resourcefulbees.utils.BeeInfoUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.resourcefulbees.resourcefulbees.utils.MathUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -69,7 +66,7 @@ public class CreativeApiaryBreederTileEntity extends TileEntity implements ITick
 
     public CreativeApiaryBreederTileEntity() {
         super(ModTileEntityTypes.CREATIVE_APIARY_BREEDER_TILE_ENTITY.get());
-        int number = (int) (Config.APIARY_MAX_BREED_TIME.get() * (1 - CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get()));
+        int number = (int) (Config.APIARY_MAX_BREED_TIME.get() * (1 - CreativeApiaryConfig.CREATIVE_APIARY_BREEDER_SPEED.get()));
         this.totalTime = number;
         this.times = new IIntArray() {
             public int get(int index) {
