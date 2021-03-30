@@ -1,5 +1,6 @@
 package com.YTrollman.CreativeApiary.block;
 
+import com.YTrollman.CreativeApiary.CreativeApiary;
 import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
 import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity;
 import com.resourcefulbees.resourcefulbees.block.multiblocks.apiary.ApiaryBlock;
@@ -107,26 +108,29 @@ public class CreativeApiaryBlock extends ApiaryBlock {
   @Override
   public void appendHoverText(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
     if (Screen.hasShiftDown()) {
+      tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.resourcefulbees.beehive.tooltip.max_bees")).appendText(" " + CreativeApiaryConfig.TCREATIVE_APIARY_MAX_BEES.get()).appendText(" " + I18n.get("block.resourcefulbees.beehive.tooltip.unique_bees"), TextFormatting.BOLD).appendText(TextFormatting.GOLD + " Bees", TextFormatting.RESET).applyStyle(TextFormatting.GOLD).build());
+
+      int number = (int) (CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get() * 100);
+      tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.speed") + (number) + "% tick reduction", TextFormatting.GOLD).build());
+
 
       int outputQuantity;
       ApiaryOutput outputTypeEnum;
-      switch (this.tier) {
-        case 100:
-          outputTypeEnum = (ApiaryOutput) CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get();
-          outputQuantity = (Integer) CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get();
-          break;
-        default:
-          outputTypeEnum = (ApiaryOutput) Config.T1_APIARY_OUTPUT.get();
-          outputQuantity = (Integer) Config.T1_APIARY_QUANTITY.get();
-      }
 
-      int number = (int) (CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get() * 100);
+      outputTypeEnum = (ApiaryOutput)CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get();
+      outputQuantity = (Integer) CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get();
 
-      tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.speed") + (number) + "% tick reduction", TextFormatting.GOLD).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.required"), TextFormatting.GOLD).build());
+      String outputType = outputTypeEnum.equals(ApiaryOutput.COMB) ? I18n.get("honeycomb.resourcefulbees") : I18n.get("honeycomb_block.resourcefulbees");
+      tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.resourcefulbees.apiary.tooltip.output_type")).appendText(" " + outputType).applyStyle(TextFormatting.GOLD).addTip(I18n.get("block.resourcefulbees.apiary.tooltip.output_quantity")).appendText(" " + outputQuantity).applyStyle(TextFormatting.GOLD).build());
+    } else if (Screen.hasControlDown()) {
+      tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.resourcefulbees.apiary.tooltip.structure_size"), TextFormatting.AQUA).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.requisites"), TextFormatting.AQUA).addTip(I18n.get("block.resourcefulbees.apiary.tooltip.drops"), TextFormatting.AQUA).addTip(I18n.get("block.resourcefulbees.apiary.tooltip.tags"), TextFormatting.AQUA).addTip(I18n.get("block.resourcefulbees.apiary.tooltip.offset"), TextFormatting.AQUA).addTip(I18n.get("block.resourcefulbees.apiary.tooltip.lock"), TextFormatting.AQUA).addTip(I18n.get("block.resourcefulbees.apiary.tooltip.lock_2"), TextFormatting.AQUA).build());
+    } else {
+      tooltip.add(new StringTextComponent(TextFormatting.YELLOW + I18n.get("resourcefulbees.shift_info")));
+      tooltip.add(new StringTextComponent(TextFormatting.AQUA + I18n.get("resourcefulbees.ctrl_info")));
     }
-
-    super.appendHoverText(stack, worldIn, tooltip, flagIn);
   }
+
+  //tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.speed") + (number) + "% tick reduction", TextFormatting.GOLD).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.required"), TextFormatting.GOLD).build());
 
   static {
     FACING = HorizontalBlock.FACING;

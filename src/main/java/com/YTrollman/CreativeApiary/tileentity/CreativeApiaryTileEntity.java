@@ -586,7 +586,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
         if (apiaryStorage == null) {
             isStructureValid.set(false);
             if (validatingPlayer != null) {
-                validatingPlayer.displayClientMessage(new StringTextComponent("Missing Apiary Storage Block!"), false);
+                validatingPlayer.displayClientMessage(new StringTextComponent("Missing Creative Apiary Storage Block!"), false);
             }
         }
 

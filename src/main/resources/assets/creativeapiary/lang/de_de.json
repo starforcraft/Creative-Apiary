@@ -3,8 +3,9 @@
 	"block.creativeapiary.creative_apiary_storage": "Kreativ Bienen Nest Lager",
 	"block.creativeapiary.creative_apiary_breeder": "Kreativ Bienenzüchter",
 	"block.creativeapiary.creative_apiary.tooltip.speed": "Max Zeit im Bienenstock: ",
-	"block.creativeapiary.creative_apiary.tooltip.required": "Du MUSST eine Creative Apiary Storage haben",
 	"block.creativeapiary.creative_apiary.tooltip.output_amount": "Ausgabemenge: ",
+	"block.creativeapiary.creative_apiary_breeder.tooltip.info2" : "Kann mit zusätzlichen Züchtern aufgerüstet werden, wenn der Kreative Bienenzüchter nicht sofort fertig ist.",
+	"block.creativeapiary.creative_apiary.tooltip.requisites": "Erfordert Kreativ Bienen Nest Lager zum bestätigen.",
 	"gui.creativeapiary.creative_apiary": "Tier Kreativ Bienen Nest",
 	"gui.creativeapiary.creative_apiary_storage": "Kreativ Bienen Nest Lager",
 	"gui.creativeapiary.creative_apiary_breeder" : "Kreativ Bienenzüchter"

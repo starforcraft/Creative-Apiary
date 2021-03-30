@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ANA",
+    "NAN",
+    "ANA"
+  ],
+  "key": {
+    "N": { "item": "minecraft:nether_star" },
+    "A": { "item": "resourcefulbees:apiary_breeder" }
+  },
+  "result": {
+    "item": "creativeapiary:creative_apiary_breeder"
+  }
+}
