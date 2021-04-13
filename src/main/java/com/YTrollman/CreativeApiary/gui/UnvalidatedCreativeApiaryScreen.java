@@ -10,6 +10,7 @@ import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.resourcefulbees.resourcefulbees.ResourcefulBees;
+import com.resourcefulbees.resourcefulbees.client.gui.screen.UnvalidatedApiaryScreen;
 import com.resourcefulbees.resourcefulbees.client.gui.widget.ArrowButton;
 import com.resourcefulbees.resourcefulbees.utils.MathUtils;
 import com.resourcefulbees.resourcefulbees.utils.PreviewHandler;
@@ -65,11 +66,19 @@ public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<Unvalidated
             setPreviewToggle();
             previewSetToggle(this.previewButton.isTriggered());
         }));
-        previewSetToggle(this.previewButton.isTriggered());
-        this.upButton = this.addButton(new ArrowButton(getGuiLeft() + 22, getGuiTop() + 12, 12, 12, 0, 0, 12, arrowButtonTexture, onPress -> this.offsetPosition(Direction.UP)));
-        this.downButton = this.addButton(new ArrowButton(getGuiLeft() + 22, getGuiTop() + 38, 12, 12, 12, 0, 12, arrowButtonTexture, onPress -> this.offsetPosition(Direction.DOWN)));
-        this.leftButton = this.addButton(new ArrowButton(getGuiLeft() + 9, getGuiTop() + 25, 12, 12, 24, 0, 12, arrowButtonTexture, onPress -> this.offsetPosition(Direction.LEFT)));
-        this.rightButton = this.addButton(new ArrowButton(getGuiLeft() + 35, getGuiTop() + 25, 12, 12, 36, 0, 12, arrowButtonTexture, onPress -> this.offsetPosition(Direction.RIGHT)));
+        this.previewSetToggle(this.previewButton.isTriggered());
+        this.upButton = this.addButton(new ArrowButton(this.getGuiLeft() + 22, this.getGuiTop() + 12, com.resourcefulbees.resourcefulbees.client.gui.widget.ArrowButton.Direction.UP, (onPress) -> {
+            this.offsetPosition(UnvalidatedCreativeApiaryScreen.Direction.UP);
+        }));
+        this.downButton = this.addButton(new ArrowButton(this.getGuiLeft() + 22, this.getGuiTop() + 38, com.resourcefulbees.resourcefulbees.client.gui.widget.ArrowButton.Direction.DOWN, (onPress) -> {
+            this.offsetPosition(UnvalidatedCreativeApiaryScreen.Direction.DOWN);
+        }));
+        this.leftButton = this.addButton(new ArrowButton(this.getGuiLeft() + 9, this.getGuiTop() + 25, com.resourcefulbees.resourcefulbees.client.gui.widget.ArrowButton.Direction.LEFT, (onPress) -> {
+            this.offsetPosition(UnvalidatedCreativeApiaryScreen.Direction.LEFT);
+        }));
+        this.rightButton = this.addButton(new ArrowButton(this.getGuiLeft() + 35, this.getGuiTop() + 25, com.resourcefulbees.resourcefulbees.client.gui.widget.ArrowButton.Direction.RIGHT, (onPress) -> {
+            this.offsetPosition(UnvalidatedCreativeApiaryScreen.Direction.RIGHT);
+        }));
     }
 
     private void previewSetToggle(boolean toggled) {

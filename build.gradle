@@ -111,7 +111,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-1.16.4:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:${jei_version}")
 
-    implementation fg.deobf("curse.maven:resourcefulbees-384508:3245153")
+    implementation fg.deobf("curse.maven:resourcefulbees-384508:3255475")
     compileOnly 'org.jetbrains:annotations:20.1.0'
 }
 

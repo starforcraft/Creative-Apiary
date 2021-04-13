@@ -15,7 +15,7 @@ description="This mod adds a Creative Apiary."
 [[dependencies.creativeapiary]]
     modId="resourcefulbees"
     mandatory=true
-    versionRange="[0.6.4b,)"
+    versionRange="[0.6.6a,)"
     ordering="NONE"
     side="BOTH"
 

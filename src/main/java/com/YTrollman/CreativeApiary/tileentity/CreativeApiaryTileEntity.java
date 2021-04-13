@@ -242,7 +242,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 type = ((ICustomBee) bee).getBeeType();
             }
 
-            if (!this.bees.containsKey(type) && this.bees.size() < this.getMaxBees()) {
+            if (this.bees.size() < this.getMaxBees()) { //!this.bees.containsKey(type) &&
                 bee.ejectPassengers();
                 CompoundNBT nbt = new CompoundNBT();
                 bee.save(nbt);
@@ -334,7 +334,6 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 Map.Entry<String, CreativeApiaryBee> element = iterator.next();
                 CreativeApiaryBee apiaryBee = element.getValue();
                 if (!apiaryBee.isLocked() && apiaryBee.getTicksInHive() > apiaryBee.minOccupationTicks && !level.isClientSide) {
-
 
                     if (this.releaseBee(blockstate, apiaryBee, false)) {
                         iterator.remove();
@@ -505,7 +504,6 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     public void importBee(ServerPlayerEntity player) {
         World world = this.level;
         boolean imported = false;
-
         if (world != null && !this.getTileStackHandler().getStackInSlot(IMPORT).isEmpty() && this.getTileStackHandler().getStackInSlot(EMPTY_JAR).getCount() < 16) {
             ItemStack filledJar = this.getTileStackHandler().getStackInSlot(IMPORT);
             ItemStack emptyJar = this.getTileStackHandler().getStackInSlot(EMPTY_JAR);
