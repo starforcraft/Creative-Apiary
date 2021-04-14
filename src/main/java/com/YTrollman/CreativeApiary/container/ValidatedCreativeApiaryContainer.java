@@ -25,7 +25,7 @@ public class ValidatedCreativeApiaryContainer extends Container {
     private final CreativeApiaryTileEntity apiaryTileEntity;
     private final BlockPos pos;
     private final PlayerEntity player;
-    private String[] beeList;
+    private int[] beeList;
 
     public ValidatedCreativeApiaryContainer(int id, World world, BlockPos pos, PlayerInventory inv) {
         super(ModContainers.VALIDATED_CREATIVE_APIARY_CONTAINER.get(), id);
@@ -122,7 +122,7 @@ public class ValidatedCreativeApiaryContainer extends Container {
 
     public boolean lockOrUnlockBee(int id) {
         if (id >= 0 && id < getApiaryTileEntity().getBeeCount()) {
-            CreativeNetPacketHandler.sendToServer(new CreativeLockBeeMessage(getApiaryTileEntity().getBlockPos(), getBeeList()[id]));
+            CreativeNetPacketHandler.sendToServer(new CreativeLockBeeMessage(getApiaryTileEntity().getBlockPos(), String.valueOf(getBeeList()[id])));
         }
         return true;
     }
@@ -130,7 +130,7 @@ public class ValidatedCreativeApiaryContainer extends Container {
     public int getSelectedBee() { return this.selectedBee.get(); }
 
     public CreativeApiaryTileEntity.CreativeApiaryBee getApiaryBee(int i) {
-        return getApiaryTileEntity().bees.get(Integer.parseInt(getBeeList()[i]));
+        return getApiaryTileEntity().bees.get(getBeeList()[i]);
     }
 
     public CreativeApiaryTileEntity getApiaryTileEntity() {
@@ -145,11 +145,11 @@ public class ValidatedCreativeApiaryContainer extends Container {
         return player;
     }
 
-    public String[] getBeeList() {
+    public int[] getBeeList() {
         return beeList;
     }
 
-    public void setBeeList(String[] beeList) {
+    public void setBeeList(int[] beeList) {
         this.beeList = beeList;
     }
 }

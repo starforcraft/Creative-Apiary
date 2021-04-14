@@ -73,7 +73,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     public static final int IMPORT = 0;
     public static final int EXPORT = 2;
     public static final int EMPTY_JAR = 1;
-    public final List<CreativeApiaryTileEntity.CreativeApiaryBee> bees = new ArrayList();
+    public final List<CreativeApiaryTileEntity.CreativeApiaryBee> bees = new LinkedList<>();
     private final List<BlockPos> structureBlocks = new ArrayList<>();
     protected int tier;
     private boolean isValidApiary;
@@ -156,7 +156,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
             }
         }
 
-        this.setStoragePos((BlockPos)null);
+        this.setStoragePos(null);
         return null;
     }
 
@@ -272,12 +272,12 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 ITextComponent displayName = bee.getName();
 
                 int number2 = (int) (MIN_HIVE_TIME * (1 - CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get()));
-                this.bees.add(new CreativeApiaryBee(nbt, ticksInHive, hasNectar ? finalMaxTimeInHive : number2, beeEntity.getSavedFlowerPos(), finalType, finalBeeColor, displayName));
+                this.bees.add(0, new CreativeApiaryBee(nbt, ticksInHive, hasNectar ? finalMaxTimeInHive : number2, beeEntity.getSavedFlowerPos(), finalType, finalBeeColor, displayName));
                 BlockPos pos = this.getBlockPos();
                 this.level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BEEHIVE_ENTER, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
                 if (imported) {
-                    this.bees.get(Integer.valueOf(type)).setLocked(true);
+                    this.bees.get(0).setLocked(true);
                 }
 
                 if (this.getNumPlayersUsing() > 0)
@@ -291,8 +291,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     }
 
     private int getMaxTimeInHive(int timeInput) {
-        int number = (int) (timeInput * (1 - CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get()));
-        return (number);
+        return ((int) (timeInput * (1 - CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get())));
     }
 
     @Override
@@ -311,7 +310,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 if (ticksSinceValidation >= 20) runStructureValidation(null);
                 else ticksSinceValidation++;
 
-                if (this.bees.size() > 0 && this.level.getRandom().nextDouble() < 0.005D) {
+                if (this.bees.isEmpty() && this.level.getRandom().nextDouble() < 0.005D) {
                     double d0 = blockpos.getX() + 0.5D;
                     double d1 = blockpos.getY();
                     double d2 = blockpos.getZ() + 0.5D;
@@ -333,8 +332,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
             BlockState blockstate = this.getBlockState();
 
             while (iterator.hasNext()) {
-                Map.Entry<String, CreativeApiaryBee> element = (Map.Entry)iterator.next();
-                CreativeApiaryTileEntity.CreativeApiaryBee apiaryBee = element.getValue();
+                CreativeApiaryBee apiaryBee = iterator.next();
                 if (!apiaryBee.isLocked() && apiaryBee.getTicksInHive() > apiaryBee.minOccupationTicks && !level.isClientSide) {
 
                     if (this.releaseBee(blockstate, apiaryBee, false)) {
@@ -361,21 +359,21 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
         return isValidApiary(false) && hive instanceof CreativeApiaryBlock;
     }
 
-    //@Override
-    public void lockOrUnlockBee(int beeType) {
-        this.bees.get(beeType).setLocked(!this.bees.get(beeType).isLocked());
+    @Override
+    public void lockOrUnlockBee(String beeType) {
+        this.bees.get(Integer.parseInt(beeType)).setLocked(!this.bees.get(Integer.parseInt(beeType)).isLocked());
         syncApiaryToPlayersUsing(this.level, this.getBlockPos(), this.saveToNBT(new CompoundNBT()));
     }
     //endregion
 
     //region NBT HANDLING
 
+    @Override
     @Nonnull
     public ListNBT writeBees() {
         ListNBT listnbt = new ListNBT();
 
-        for(CreativeApiaryBee apiaryBee : this.bees) {
-        //this.bees.forEach((key, apiaryBee) -> {
+        this.bees.forEach(apiaryBee -> {
             apiaryBee.entityData.remove("UUID");
             CompoundNBT compoundnbt = new CompoundNBT();
             compoundnbt.put("EntityData", apiaryBee.entityData);
@@ -389,7 +387,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 compoundnbt.put(NBTConstants.NBT_FLOWER_POS, NBTUtil.writeBlockPos(apiaryBee.savedFlowerPos));
             }
             listnbt.add(compoundnbt);
-        }//);
+        });
 
         return listnbt;
     }
@@ -399,6 +397,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
         ListNBT listnbt = nbt.getList(NBTConstants.NBT_BEES, 10);
 
         if (!listnbt.isEmpty()) {
+            this.bees.clear();
             for (int i = 0; i < listnbt.size(); ++i) {
                 CompoundNBT data = listnbt.getCompound(i);
 
@@ -407,7 +406,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 String beeColor = data.contains(NBTConstants.NBT_COLOR) ? data.getString(NBTConstants.NBT_COLOR) : VANILLA_BEE_COLOR;
                 ITextComponent displayName = data.contains(NBTConstants.NBT_BEE_NAME) ? ITextComponent.Serializer.fromJson(data.getString(NBTConstants.NBT_BEE_NAME)) : new StringTextComponent("Temp Bee Name");
 
-                this.bees.add(Integer.valueOf(data.getString(NBTConstants.NBT_BEE_TYPE)), new CreativeApiaryBee(
+                this.bees.add(0, new CreativeApiaryBee(
                         data.getCompound("EntityData"),
                         data.getInt("TicksInHive"),
                         data.getInt("MinOccupationTicks"),
@@ -416,7 +415,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                         beeColor,
                         displayName));
 
-                this.bees.get(Integer.valueOf(beeType)).setLocked(data.getBoolean(NBTConstants.NBT_LOCKED));
+                this.bees.get(0).setLocked(data.getBoolean(NBTConstants.NBT_LOCKED));
             }
         }
     }
@@ -459,12 +458,11 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
     private void validateBees() {
         if (this.level == null) return;
-        for(CreativeApiaryBee apiaryBee : this.bees) {
-        //bees.forEach((s, apiaryBee) -> {
+        this.bees.forEach(apiaryBee -> {
             String id = apiaryBee.entityData.getString("id");
             EntityType<?> type = BeeInfoUtils.getEntityType(id);
             if (type == EntityType.PIG) bees.remove(apiaryBee);
-        }//);
+        });
     }
 
     @Override
