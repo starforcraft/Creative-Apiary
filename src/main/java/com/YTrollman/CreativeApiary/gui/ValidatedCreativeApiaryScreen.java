@@ -126,7 +126,7 @@ public class ValidatedCreativeApiaryScreen extends ContainerScreen<ValidatedCrea
 
     private void exportSelectedBee() {
         if (apiaryTileEntity.getBeeCount() != 0) {
-            CreativeNetPacketHandler.sendToServer(new CreativeExportBeeMessage(this.menu.getPos(), this.menu.getBeeList()[this.menu.getSelectedBee()]));
+            CreativeNetPacketHandler.sendToServer(new CreativeExportBeeMessage(this.menu.getPos(), String.valueOf(this.menu.getBeeList()[this.menu.getSelectedBee()])));
             //beeIndexOffset--;
             // TODO this causes Array Out of Bounds exception.
             //  Not having it causes GUI to not update correctly when last bee in list is exported.
@@ -167,7 +167,12 @@ public class ValidatedCreativeApiaryScreen extends ContainerScreen<ValidatedCrea
             breedTabButton.active = apiaryTileEntity.getApiaryBreeder2() != null;
             storageTabButton.active = apiaryTileEntity.getApiaryStorage2() != null;
 
-            this.menu.setBeeList(Arrays.copyOf(apiaryTileEntity.bees.toArray(), apiaryTileEntity.getBeeCount(), String[].class));
+            int[] tempInt = new int[apiaryTileEntity.getBeeCount()];
+            for (int i = 0; i < tempInt.length; i++) {
+                tempInt[i] = i;
+            }
+
+            this.menu.setBeeList(tempInt);
             this.minecraft.getTextureManager().bind(VALIDATED_TEXTURE);
             int i = this.leftPos;
             int j = this.topPos;
