@@ -10,7 +10,9 @@ import com.YTrollman.CreativeApiary.CreativeApiary;
 import com.YTrollman.CreativeApiary.block.CreativeApiaryStorageBlock;
 import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
 import com.YTrollman.CreativeApiary.registry.ModBlocks;
+import com.google.common.collect.Lists;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryTileEntity;
+import net.minecraft.tileentity.BeehiveTileEntity;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import com.YTrollman.CreativeApiary.block.CreativeApiaryBlock;
@@ -71,7 +73,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     public static final int IMPORT = 0;
     public static final int EXPORT = 2;
     public static final int EMPTY_JAR = 1;
-    public final Map<String, CreativeApiaryTileEntity.CreativeApiaryBee> bees = new LinkedHashMap();
+    public final List<CreativeApiaryTileEntity.CreativeApiaryBee> bees = new ArrayList();
     private final List<BlockPos> structureBlocks = new ArrayList<>();
     protected int tier;
     private boolean isValidApiary;
@@ -235,8 +237,8 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     public boolean tryEnterHive(@Nonnull Entity bee, boolean hasNectar, int ticksInHive, boolean imported) {
         if (this.level != null && bee instanceof BeeEntity) {
             BeeEntity beeEntity = (BeeEntity) bee;
-            String type = BeeConstants.VANILLA_BEE_TYPE;
-            String beeColor = BeeConstants.VANILLA_BEE_COLOR;
+            String type = VANILLA_BEE_TYPE;
+            String beeColor = VANILLA_BEE_COLOR;
 
             if (bee instanceof ICustomBee) {
                 type = ((ICustomBee) bee).getBeeType();
@@ -263,19 +265,19 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 }
 
                 int finalMaxTimeInHive = maxTimeInHive;
-                String finalType = type;
+                String finalType = String.valueOf(type);
 
                 String finalBeeColor = beeColor;
 
                 ITextComponent displayName = bee.getName();
 
                 int number2 = (int) (MIN_HIVE_TIME * (1 - CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get()));
-                this.bees.computeIfAbsent(finalType, k -> new CreativeApiaryBee(nbt, ticksInHive, hasNectar ? finalMaxTimeInHive : number2, beeEntity.getSavedFlowerPos(), finalType, finalBeeColor, displayName));
+                this.bees.add(new CreativeApiaryBee(nbt, ticksInHive, hasNectar ? finalMaxTimeInHive : number2, beeEntity.getSavedFlowerPos(), finalType, finalBeeColor, displayName));
                 BlockPos pos = this.getBlockPos();
                 this.level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BEEHIVE_ENTER, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
                 if (imported) {
-                    this.bees.get(type).setLocked(true);
+                    this.bees.get(Integer.valueOf(type)).setLocked(true);
                 }
 
                 if (this.getNumPlayersUsing() > 0)
@@ -327,12 +329,12 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
     private void tickBees() {
         if (this.level != null) {
-            Iterator<Map.Entry<String, CreativeApiaryBee>> iterator = this.bees.entrySet().iterator();
+            Iterator<CreativeApiaryBee> iterator = this.bees.iterator();
             BlockState blockstate = this.getBlockState();
 
             while (iterator.hasNext()) {
-                Map.Entry<String, CreativeApiaryBee> element = iterator.next();
-                CreativeApiaryBee apiaryBee = element.getValue();
+                Map.Entry<String, CreativeApiaryBee> element = (Map.Entry)iterator.next();
+                CreativeApiaryTileEntity.CreativeApiaryBee apiaryBee = element.getValue();
                 if (!apiaryBee.isLocked() && apiaryBee.getTicksInHive() > apiaryBee.minOccupationTicks && !level.isClientSide) {
 
                     if (this.releaseBee(blockstate, apiaryBee, false)) {
@@ -359,8 +361,8 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
         return isValidApiary(false) && hive instanceof CreativeApiaryBlock;
     }
 
-    @Override
-    public void lockOrUnlockBee(String beeType) {
+    //@Override
+    public void lockOrUnlockBee(int beeType) {
         this.bees.get(beeType).setLocked(!this.bees.get(beeType).isLocked());
         syncApiaryToPlayersUsing(this.level, this.getBlockPos(), this.saveToNBT(new CompoundNBT()));
     }
@@ -372,7 +374,8 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     public ListNBT writeBees() {
         ListNBT listnbt = new ListNBT();
 
-        this.bees.forEach((key, apiaryBee) -> {
+        for(CreativeApiaryBee apiaryBee : this.bees) {
+        //this.bees.forEach((key, apiaryBee) -> {
             apiaryBee.entityData.remove("UUID");
             CompoundNBT compoundnbt = new CompoundNBT();
             compoundnbt.put("EntityData", apiaryBee.entityData);
@@ -386,7 +389,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                 compoundnbt.put(NBTConstants.NBT_FLOWER_POS, NBTUtil.writeBlockPos(apiaryBee.savedFlowerPos));
             }
             listnbt.add(compoundnbt);
-        });
+        }//);
 
         return listnbt;
     }
@@ -401,10 +404,10 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
                 BlockPos savedFlowerPos = data.contains(NBTConstants.NBT_FLOWER_POS) ? NBTUtil.readBlockPos(data.getCompound(NBTConstants.NBT_FLOWER_POS)) : null;
                 String beeType = data.getString(NBTConstants.NBT_BEE_TYPE);
-                String beeColor = data.contains(NBTConstants.NBT_COLOR) ? data.getString(NBTConstants.NBT_COLOR) : BeeConstants.VANILLA_BEE_COLOR;
+                String beeColor = data.contains(NBTConstants.NBT_COLOR) ? data.getString(NBTConstants.NBT_COLOR) : VANILLA_BEE_COLOR;
                 ITextComponent displayName = data.contains(NBTConstants.NBT_BEE_NAME) ? ITextComponent.Serializer.fromJson(data.getString(NBTConstants.NBT_BEE_NAME)) : new StringTextComponent("Temp Bee Name");
 
-                this.bees.computeIfAbsent(data.getString(NBTConstants.NBT_BEE_TYPE), k -> new CreativeApiaryBee(
+                this.bees.add(Integer.valueOf(data.getString(NBTConstants.NBT_BEE_TYPE)), new CreativeApiaryBee(
                         data.getCompound("EntityData"),
                         data.getInt("TicksInHive"),
                         data.getInt("MinOccupationTicks"),
@@ -413,7 +416,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
                         beeColor,
                         displayName));
 
-                this.bees.get(beeType).setLocked(data.getBoolean(NBTConstants.NBT_LOCKED));
+                this.bees.get(Integer.valueOf(beeType)).setLocked(data.getBoolean(NBTConstants.NBT_LOCKED));
             }
         }
     }
@@ -456,11 +459,12 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
     private void validateBees() {
         if (this.level == null) return;
-        bees.forEach((s, apiaryBee) -> {
+        for(CreativeApiaryBee apiaryBee : this.bees) {
+        //bees.forEach((s, apiaryBee) -> {
             String id = apiaryBee.entityData.getString("id");
             EntityType<?> type = BeeInfoUtils.getEntityType(id);
-            if (type == EntityType.PIG) bees.remove(s);
-        });
+            if (type == EntityType.PIG) bees.remove(apiaryBee);
+        }//);
     }
 
     @Override
@@ -531,8 +535,8 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
         player.displayClientMessage(new TranslationTextComponent("gui.resourcefulbees.apiary.import." + imported), true);
     }
 
-    @Override
-    public void exportBee(ServerPlayerEntity player, String beeType) {
+    //@Override
+    public void exportBee(ServerPlayerEntity player, int beeType) {
         boolean exported = false;
         CreativeApiaryBee bee = this.bees.get(beeType);
 

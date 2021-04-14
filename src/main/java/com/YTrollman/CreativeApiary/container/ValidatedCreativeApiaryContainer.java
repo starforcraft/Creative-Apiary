@@ -130,7 +130,7 @@ public class ValidatedCreativeApiaryContainer extends Container {
     public int getSelectedBee() { return this.selectedBee.get(); }
 
     public CreativeApiaryTileEntity.CreativeApiaryBee getApiaryBee(int i) {
-        return getApiaryTileEntity().bees.get(getBeeList()[i]);
+        return getApiaryTileEntity().bees.get(Integer.parseInt(getBeeList()[i]));
     }
 
     public CreativeApiaryTileEntity getApiaryTileEntity() {

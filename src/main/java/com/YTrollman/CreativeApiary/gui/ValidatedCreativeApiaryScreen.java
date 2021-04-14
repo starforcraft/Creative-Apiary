@@ -167,7 +167,7 @@ public class ValidatedCreativeApiaryScreen extends ContainerScreen<ValidatedCrea
             breedTabButton.active = apiaryTileEntity.getApiaryBreeder2() != null;
             storageTabButton.active = apiaryTileEntity.getApiaryStorage2() != null;
 
-            this.menu.setBeeList(Arrays.copyOf(apiaryTileEntity.bees.keySet().toArray(), apiaryTileEntity.getBeeCount(), String[].class));
+            this.menu.setBeeList(Arrays.copyOf(apiaryTileEntity.bees.toArray(), apiaryTileEntity.getBeeCount(), String[].class));
             this.minecraft.getTextureManager().bind(VALIDATED_TEXTURE);
             int i = this.leftPos;
             int j = this.topPos;
