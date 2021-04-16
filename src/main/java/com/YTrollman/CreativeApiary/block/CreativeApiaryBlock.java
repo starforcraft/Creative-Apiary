@@ -108,8 +108,9 @@ public class CreativeApiaryBlock extends ApiaryBlock {
   @Override
   public void appendHoverText(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
     if (Screen.hasShiftDown()) {
-      tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.resourcefulbees.beehive.tooltip.max_bees")).appendText(" " + CreativeApiaryConfig.TCREATIVE_APIARY_MAX_BEES.get()).appendText(" " + I18n.get("block.resourcefulbees.beehive.tooltip.unique_bees"), TextFormatting.BOLD).appendText(TextFormatting.GOLD + " Bees", TextFormatting.RESET).applyStyle(TextFormatting.GOLD).build());
+      tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.resourcefulbees.beehive.tooltip.max_bees")).appendText(" " + CreativeApiaryConfig.TCREATIVE_APIARY_MAX_BEES.get()).appendText(TextFormatting.GOLD + " Bees", TextFormatting.RESET).applyStyle(TextFormatting.GOLD).build());
 
+      //.appendText(" " + I18n.get("block.resourcefulbees.beehive.tooltip.unique_bees"), TextFormatting.BOLD)
       int number = (int) (CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get() * 100);
       tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.speed") + (number) + "% tick reduction", TextFormatting.GOLD).build());
 
@@ -129,8 +130,6 @@ public class CreativeApiaryBlock extends ApiaryBlock {
       tooltip.add(new StringTextComponent(TextFormatting.AQUA + I18n.get("resourcefulbees.ctrl_info")));
     }
   }
-
-  //tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.speed") + (number) + "% tick reduction", TextFormatting.GOLD).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.required"), TextFormatting.GOLD).build());
 
   static {
     FACING = HorizontalBlock.FACING;

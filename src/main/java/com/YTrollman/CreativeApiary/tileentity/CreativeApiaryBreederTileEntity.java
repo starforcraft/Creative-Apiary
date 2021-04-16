@@ -4,6 +4,7 @@ import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
 import com.YTrollman.CreativeApiary.container.CreativeApiaryBreederContainer;
 import com.YTrollman.CreativeApiary.registry.ModTileEntityTypes;
 import com.resourcefulbees.resourcefulbees.api.ICustomBee;
+import com.resourcefulbees.resourcefulbees.api.beedata.BreedData;
 import com.resourcefulbees.resourcefulbees.config.Config;
 import com.resourcefulbees.resourcefulbees.container.AutomationSensitiveItemStackHandler;
 import com.resourcefulbees.resourcefulbees.container.AutomationSensitiveItemStackHandler.IAcceptor;
@@ -201,13 +202,13 @@ public class CreativeApiaryBreederTileEntity extends TileEntity implements ITick
                 boolean canBreed = BeeRegistry.getRegistry().canParentsBreed(p1Type, p2Type);
                 ItemStack f1Stack = this.getTileStackHandler().getStackInSlot(getFeed1Slots()[slot]);
                 ItemStack f2Stack = this.getTileStackHandler().getStackInSlot(getFeed2Slots()[slot]);
-                String p1FeedItem = ((CustomBeeEntity)p1Entity).getBeeData().getBreedData().getFeedItem();
-                String p2FeedItem = ((CustomBeeEntity)p2Entity).getBeeData().getBreedData().getFeedItem();
+                BreedData p1BreedData = ((CustomBeeEntity)p1Entity).getBeeData().getBreedData();
+                BreedData p2BreedData = ((CustomBeeEntity)p2Entity).getBeeData().getBreedData();
                 int f1StackCount = this.getTileStackHandler().getStackInSlot(getFeed1Slots()[slot]).getCount();
                 int f2StackCount = this.getTileStackHandler().getStackInSlot(getFeed2Slots()[slot]).getCount();
                 int p1FeedAmount = ((CustomBeeEntity)p1Entity).getBeeData().getBreedData().getFeedAmount();
                 int p2FeedAmount = ((CustomBeeEntity)p2Entity).getBeeData().getBreedData().getFeedAmount();
-                return canBreed && BeeInfoUtils.isValidBreedItem(f1Stack, p1FeedItem) && BeeInfoUtils.isValidBreedItem(f2Stack, p2FeedItem) && f1StackCount >= p1FeedAmount && f2StackCount >= p2FeedAmount && !this.getTileStackHandler().getStackInSlot(getEmptyJarSlots()[slot]).isEmpty();
+                return canBreed && BeeInfoUtils.isValidBreedItem(f1Stack, p1BreedData) && BeeInfoUtils.isValidBreedItem(f2Stack, p2BreedData) && f1StackCount >= p1FeedAmount && f2StackCount >= p2FeedAmount && !this.getTileStackHandler().getStackInSlot(getEmptyJarSlots()[slot]).isEmpty();
             }
         }
 
