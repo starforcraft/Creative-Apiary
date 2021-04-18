@@ -262,7 +262,7 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
             }
             ItemStack slotStack = getItemStackHandler().getStackInSlot(slotIndex);
 
-            int maxStackSize = 16384;
+            int maxStackSize = CreativeApiaryConfig.CREATIVE_APIARY_STORAGE_ITEM_MAX_STACK_SIZE.get();
 
             if (slotStack.isEmpty()) {
                 int count = itemstack.getCount();
