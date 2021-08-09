@@ -20,8 +20,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class CreativeApiaryStorageScreen extends ContainerScreen<CreativeApiaryStorageContainer> {
 
@@ -37,7 +36,7 @@ public class CreativeApiaryStorageScreen extends ContainerScreen<CreativeApiaryS
 
     public CreativeApiaryStorageScreen(CreativeApiaryStorageContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
-
+        apiaryStorageTileEntity = this.menu.getApiaryStorageTileEntity();
         preInit();
     }
 
@@ -52,8 +51,6 @@ public class CreativeApiaryStorageScreen extends ContainerScreen<CreativeApiaryS
         super.init();
         this.buttons.clear();
 
-        apiaryStorageTileEntity = this.menu.getApiaryStorageTileEntity();
-
         int i = this.leftPos;
         int j = this.topPos;
         int t = i + this.imageWidth - 23;
@@ -62,7 +59,7 @@ public class CreativeApiaryStorageScreen extends ContainerScreen<CreativeApiaryS
                 onPress -> this.changeScreen(ApiaryTabs.MAIN), 128, 128) {
 
             @Override
-            public void renderToolTip(@Nonnull MatrixStack matrix, int mouseX, int mouseY) {
+            public void renderToolTip(@NotNull MatrixStack matrix, int mouseX, int mouseY) {
                 StringTextComponent s = new StringTextComponent(I18n.get("gui.resourcefulbees.apiary.button.main_screen"));
                 CreativeApiaryStorageScreen.this.renderTooltip(matrix, s, mouseX, mouseY);
             }
@@ -72,7 +69,7 @@ public class CreativeApiaryStorageScreen extends ContainerScreen<CreativeApiaryS
                 onPress -> this.changeScreen(ApiaryTabs.STORAGE), 128, 128) {
 
             @Override
-            public void renderToolTip(@Nonnull MatrixStack matrix,int mouseX, int mouseY) {
+            public void renderToolTip(@NotNull MatrixStack matrix,int mouseX, int mouseY) {
                 StringTextComponent s = new StringTextComponent(I18n.get("gui.resourcefulbees.apiary.button.storage_screen"));
                 CreativeApiaryStorageScreen.this.renderTooltip(matrix, s, mouseX, mouseY);
             }
@@ -82,7 +79,7 @@ public class CreativeApiaryStorageScreen extends ContainerScreen<CreativeApiaryS
                 onPress -> this.changeScreen(ApiaryTabs.BREED), 128, 128) {
 
             @Override
-            public void renderToolTip(@Nonnull MatrixStack matrix,int mouseX, int mouseY) {
+            public void renderToolTip(@NotNull MatrixStack matrix,int mouseX, int mouseY) {
                 StringTextComponent s = new StringTextComponent(I18n.get("gui.resourcefulbees.apiary.button.breed_screen"));
                 CreativeApiaryStorageScreen.this.renderTooltip(matrix, s, mouseX, mouseY);
             }
@@ -104,22 +101,15 @@ public class CreativeApiaryStorageScreen extends ContainerScreen<CreativeApiaryS
     }
 
     @Override
-    public void render(@Nonnull MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrix);
-        super.render(matrix, mouseX, mouseY, partialTicks);
-        this.renderTooltip(matrix, mouseX, mouseY);
-    }
-
-    @Override
-    protected void renderBg(@Nonnull MatrixStack matrix, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(@NotNull MatrixStack matrix, float partialTicks, int mouseX, int mouseY) {
         if (this.menu.isRebuild()) {
             preInit();
             init();
             this.menu.setRebuild(false);
         }
 
-            mainTabButton.active = getApiaryStorageTileEntity().getApiary() != null;
-            breedTabButton.active = getApiaryStorageTileEntity().getApiary() != null && getApiaryStorageTileEntity().getApiary().getBreederPos() != null;
+        mainTabButton.active = getApiaryStorageTileEntity().getApiary() != null;
+        breedTabButton.active = getApiaryStorageTileEntity().getApiary() != null && getApiaryStorageTileEntity().getApiary().getBreederPos() != null;
 
         Minecraft client = this.minecraft;
         if (client != null) {
@@ -135,7 +125,16 @@ public class CreativeApiaryStorageScreen extends ContainerScreen<CreativeApiaryS
     }
 
     @Override
-    protected void renderLabels(@Nonnull MatrixStack matrix, int mouseX, int mouseY) {
+    public void render(@NotNull MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
+        if (getApiaryStorageTileEntity() != null) {
+            this.renderBackground(matrix);
+            super.render(matrix, mouseX, mouseY, partialTicks);
+            this.renderTooltip(matrix, mouseX, mouseY);
+        }
+    }
+
+    @Override
+    protected void renderLabels(@NotNull MatrixStack matrix, int mouseX, int mouseY) {
         for (Widget widget : this.buttons) {
             if (widget.isHovered()) {
                 widget.renderToolTip(matrix, mouseX - this.leftPos, mouseY - this.topPos);

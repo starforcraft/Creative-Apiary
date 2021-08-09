@@ -1,8 +1,14 @@
 package com.YTrollman.CreativeApiary.container;
 
+import com.YTrollman.CreativeApiary.network.CreativeLockBeeMessage;
+import com.YTrollman.CreativeApiary.network.CreativeNetPacketHandler;
+import com.YTrollman.CreativeApiary.registry.ModContainers;
+import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity;
+import com.resourcefulbees.resourcefulbees.container.ContainerWithStackMove;
+import com.resourcefulbees.resourcefulbees.container.OutputSlot;
+import com.resourcefulbees.resourcefulbees.container.SlotItemHandlerUnconditioned;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -12,14 +18,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
-import com.YTrollman.CreativeApiary.network.CreativeLockBeeMessage;
-import com.YTrollman.CreativeApiary.network.CreativeNetPacketHandler;
-import com.YTrollman.CreativeApiary.registry.ModContainers;
-import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity;
-import com.resourcefulbees.resourcefulbees.container.OutputSlot;
-import com.resourcefulbees.resourcefulbees.container.SlotItemHandlerUnconditioned;
-
-public class ValidatedCreativeApiaryContainer extends Container {
+public class ValidatedCreativeApiaryContainer extends ContainerWithStackMove {
 
     private final IntReferenceHolder selectedBee = IntReferenceHolder.standalone();
     private final CreativeApiaryTileEntity apiaryTileEntity;
@@ -88,29 +87,14 @@ public class ValidatedCreativeApiaryContainer extends Container {
         super.removed(playerIn);
     }
 
-    @Nonnull
     @Override
-    public ItemStack quickMoveStack(@Nonnull PlayerEntity playerIn, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasItem()) {
-            ItemStack itemstack1 = slot.getItem();
-            itemstack = itemstack1.copy();
-            if (index <= 1) {
-                if (!this.moveItemStackTo(itemstack1, 2, slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.moveItemStackTo(itemstack1, 0, 2, false)) {
-                return ItemStack.EMPTY;
-            }
+    public int getContainerInputEnd() {
+        return 2;
+    }
 
-            if (itemstack1.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-        }
-        return itemstack;
+    @Override
+    public int getInventoryStart() {
+        return 3;
     }
 
     public boolean selectBee(int id) {

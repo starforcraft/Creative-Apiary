@@ -62,7 +62,7 @@ public class CreativeApiaryBreederBlock extends Block {
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
         int number = (int) (Config.APIARY_MAX_BREED_TIME.get() * (1 - CreativeApiaryConfig.CREATIVE_APIARY_BREEDER_SPEED.get()));
-        tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.resourcefulbees.apiary_breeder.tooltip.info"), TextFormatting.GOLD).addTip(I18n.get("block.resourcefulbees.apiary_breeder.tooltip.info1"), TextFormatting.GOLD).appendText(String.format("%1$s ticks", number), TextFormatting.GOLD).addTip(I18n.get("block.creativeapiary.creative_apiary_breeder.tooltip.info2"), TextFormatting.GOLD).build());
+        tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.creativeapiary.creative_apiary_breeder.tooltip.info"), TextFormatting.GOLD).addTip(I18n.get("block.resourcefulbees.apiary_breeder.tooltip.info1"), TextFormatting.GOLD).appendText(String.format("%1$s ticks", number), TextFormatting.GOLD).addTip(I18n.get("block.creativeapiary.creative_apiary_breeder.tooltip.info2"), TextFormatting.GOLD).build());
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
     }
 }

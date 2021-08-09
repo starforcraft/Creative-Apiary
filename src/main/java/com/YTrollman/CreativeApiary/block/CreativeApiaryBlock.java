@@ -1,22 +1,13 @@
 package com.YTrollman.CreativeApiary.block;
 
-import com.YTrollman.CreativeApiary.CreativeApiary;
 import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
 import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity;
 import com.resourcefulbees.resourcefulbees.block.multiblocks.apiary.ApiaryBlock;
-import com.resourcefulbees.resourcefulbees.config.Config;
 import com.resourcefulbees.resourcefulbees.lib.ApiaryOutput;
-import com.resourcefulbees.resourcefulbees.lib.BeeConstants;
 import com.resourcefulbees.resourcefulbees.utils.TooltipBuilder;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.AbstractBlock.Properties;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -46,15 +37,19 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+
 public class CreativeApiaryBlock extends ApiaryBlock {
   public static final DirectionProperty FACING;
   public static final BooleanProperty VALIDATED;
   private final int tier;
 
   public CreativeApiaryBlock(int tier, float hardness, float resistance) {
-    super(100, 15f,30f);
+    super(100, hardness,resistance);
     this.tier = tier;
-    this.registerDefaultState((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(VALIDATED, false)).setValue(FACING, Direction.NORTH));
+    this.registerDefaultState(this.stateDefinition.any().setValue(VALIDATED, false).setValue(FACING, Direction.NORTH));
   }
 
   @NotNull
@@ -70,7 +65,7 @@ public class CreativeApiaryBlock extends ApiaryBlock {
 
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    return context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? (BlockState)this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()) : (BlockState)this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+    return context.getPlayer() != null && context.getPlayer().isShiftKeyDown() ? this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()) : this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
   }
 
   @Override
@@ -110,7 +105,6 @@ public class CreativeApiaryBlock extends ApiaryBlock {
     if (Screen.hasShiftDown()) {
       tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.resourcefulbees.beehive.tooltip.max_bees")).appendText(" " + CreativeApiaryConfig.TCREATIVE_APIARY_MAX_BEES.get()).appendText(TextFormatting.GOLD + " Bees", TextFormatting.RESET).applyStyle(TextFormatting.GOLD).build());
 
-      //.appendText(" " + I18n.get("block.resourcefulbees.beehive.tooltip.unique_bees"), TextFormatting.BOLD)
       int number = (int) (CreativeApiaryConfig.TCREATIVE_APIARY_SPEED.get() * 100);
       tooltip.addAll((new TooltipBuilder()).addTip(I18n.get("block.creativeapiary.creative_apiary.tooltip.speed") + (number) + "% tick reduction", TextFormatting.GOLD).build());
 

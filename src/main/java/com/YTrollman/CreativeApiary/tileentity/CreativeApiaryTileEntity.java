@@ -92,7 +92,7 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
     protected int ticksSinceBeesFlagged;
 
     public CreativeApiaryTileEntity() {
-        super(ModTileEntityTypes.CREATIVE_APIARY_TILE_ENTITY.get()); //ModTileEntityTypes.CREATIVE_APIARY_TILE_ENTITY.get()
+        super(ModTileEntityTypes.CREATIVE_APIARY_TILE_ENTITY.get());
     }
 
     //region PLAYER SYNCING

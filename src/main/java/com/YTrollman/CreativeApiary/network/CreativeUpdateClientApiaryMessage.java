@@ -33,14 +33,12 @@ public class CreativeUpdateClientApiaryMessage {
     public static void handle(CreativeUpdateClientApiaryMessage message, Supplier<NetworkEvent.Context> context){
         context.get().enqueueWork(() -> {
             ClientPlayerEntity player = Minecraft.getInstance().player;
-            if (player != null) {
-                if (player.level.isLoaded(message.pos)) {
-                    TileEntity tileEntity = player.level.getBlockEntity(message.pos);
-                    if (tileEntity instanceof CreativeApiaryTileEntity) {
-                        CreativeApiaryTileEntity apiaryTileEntity = (CreativeApiaryTileEntity) tileEntity;
-                        apiaryTileEntity.bees.clear();
-                        apiaryTileEntity.loadFromNBT(message.data);
-                    }
+            if (player.level.isLoaded(message.pos)) {
+                TileEntity tileEntity = player.level.getBlockEntity(message.pos);
+                if (tileEntity instanceof CreativeApiaryTileEntity) {
+                    CreativeApiaryTileEntity apiaryTileEntity = (CreativeApiaryTileEntity) tileEntity;
+                    apiaryTileEntity.bees.clear();
+                    apiaryTileEntity.loadFromNBT(message.data);
                 }
             }
         });

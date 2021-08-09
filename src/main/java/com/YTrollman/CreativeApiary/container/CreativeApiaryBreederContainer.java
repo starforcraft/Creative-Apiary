@@ -2,12 +2,16 @@ package com.YTrollman.CreativeApiary.container;
 
 import com.YTrollman.CreativeApiary.registry.ModContainers;
 import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryBreederTileEntity;
+import com.resourcefulbees.resourcefulbees.container.ContainerWithStackMove;
 import com.resourcefulbees.resourcefulbees.container.SlotItemHandlerUnconditioned;
+import com.resourcefulbees.resourcefulbees.item.UpgradeItem;
+import com.resourcefulbees.resourcefulbees.lib.NBTConstants;
+import com.resourcefulbees.resourcefulbees.utils.MathUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IntArray;
 import net.minecraft.util.math.BlockPos;
@@ -15,14 +19,14 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
-import static com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryBreederTileEntity.*;
+import static com.YTrollman.CreativeApiary.tileentity.CreativeApiaryBreederTileEntity.*;
 
-public class CreativeApiaryBreederContainer extends Container {
+public class CreativeApiaryBreederContainer extends ContainerWithStackMove {
 
     private final CreativeApiaryBreederTileEntity apiaryBreederTileEntity;
     private final PlayerInventory playerInventory;
+    private int numberOfBreeders;
     private boolean rebuild;
-    private final int breedersize = 5;
 
     public final IIntArray times;
 
@@ -48,98 +52,83 @@ public class CreativeApiaryBreederContainer extends Container {
     public void setupSlots(boolean rebuild) {
         if (getApiaryBreederTileEntity() != null) {
             this.slots.clear();
+            numberOfBreeders = getApiaryBreederTileEntity().getNumberOfBreeders();
 
-            for (int i = 0; i< this.breedersize; i++) {
+            for (int i = 0; i< getNumberOfBreeders(); i++) {
                 int finalI = i;
-                this.addSlot(new SlotItemHandlerUnconditioned(getApiaryBreederTileEntity().getTileStackHandler(), apiaryBreederTileEntity.getParent1Slots()[finalI], 33, 18 +(finalI *20)){
+                this.addSlot(new SlotItemHandlerUnconditioned(getApiaryBreederTileEntity().getTileStackHandler(), getParent1Slots()[finalI], 33, 18 +(finalI *20)){
 
                     @Override
                     public int getMaxStackSize() {
-                        return getApiaryBreederTileEntity().getTileStackHandler().getSlotLimit(apiaryBreederTileEntity.getParent1Slots()[finalI]);
+                        return getApiaryBreederTileEntity().getTileStackHandler().getSlotLimit(getParent1Slots()[finalI]);
                     }
 
                     @Override
                     public boolean mayPlace(ItemStack stack) {
-                        return getApiaryBreederTileEntity().getTileStackHandler().isItemValid(apiaryBreederTileEntity.getParent1Slots()[finalI], stack);
+                        return getApiaryBreederTileEntity().getTileStackHandler().isItemValid(getParent1Slots()[finalI], stack);
                     }
                 });
-                this.addSlot(new SlotItemHandlerUnconditioned(getApiaryBreederTileEntity().getTileStackHandler(), apiaryBreederTileEntity.getFeed1Slots()[i], 69, 18 +(i*20)){
+                this.addSlot(new SlotItemHandlerUnconditioned(getApiaryBreederTileEntity().getTileStackHandler(), getFeed1Slots()[i], 69, 18 +(i*20)){
 
                     @Override
                     public boolean mayPlace(ItemStack stack) {
-                        return getApiaryBreederTileEntity().getTileStackHandler().isItemValid(apiaryBreederTileEntity.getFeed1Slots()[finalI], stack);
+                        return getApiaryBreederTileEntity().getTileStackHandler().isItemValid(getFeed1Slots()[finalI], stack);
                     }
                 });
-                this.addSlot(new SlotItemHandlerUnconditioned(getApiaryBreederTileEntity().getTileStackHandler(), apiaryBreederTileEntity.getParent2Slots()[i], 105, 18 +(i*20)){
+                this.addSlot(new SlotItemHandlerUnconditioned(getApiaryBreederTileEntity().getTileStackHandler(), getParent2Slots()[i], 105, 18 +(i*20)){
 
                     @Override
                     public int getMaxStackSize() {
-                        return getApiaryBreederTileEntity().getTileStackHandler().getSlotLimit(apiaryBreederTileEntity.getParent2Slots()[finalI]);
+                        return getApiaryBreederTileEntity().getTileStackHandler().getSlotLimit(getParent2Slots()[finalI]);
                     }
 
                     @Override
                     public boolean mayPlace(ItemStack stack) {
-                        return getApiaryBreederTileEntity().getTileStackHandler().isItemValid(apiaryBreederTileEntity.getParent2Slots()[finalI], stack);
+                        return getApiaryBreederTileEntity().getTileStackHandler().isItemValid(getParent2Slots()[finalI], stack);
                     }
                 });
-                this.addSlot(new SlotItemHandlerUnconditioned(getApiaryBreederTileEntity().getTileStackHandler(), apiaryBreederTileEntity.getFeed2Slots()[i], 141, 18 +(i*20)){
+                this.addSlot(new SlotItemHandlerUnconditioned(getApiaryBreederTileEntity().getTileStackHandler(), getFeed2Slots()[i], 141, 18 +(i*20)){
 
                     @Override
                     public boolean mayPlace(ItemStack stack) {
-                        return getApiaryBreederTileEntity().getTileStackHandler().isItemValid(apiaryBreederTileEntity.getFeed2Slots()[finalI], stack);
+                        return getApiaryBreederTileEntity().getTileStackHandler().isItemValid(getFeed2Slots()[finalI], stack);
                     }
                 });
-                this.addSlot(new SlotItemHandlerUnconditioned(getApiaryBreederTileEntity().getTileStackHandler(), apiaryBreederTileEntity.getEmptyJarSlots()[i], 177, 18 +(i*20)){
+                this.addSlot(new SlotItemHandlerUnconditioned(getApiaryBreederTileEntity().getTileStackHandler(), getEmptyJarSlots()[i], 177, 18 +(i*20)){
 
                     @Override
                     public int getMaxStackSize() {
-                        return getApiaryBreederTileEntity().getTileStackHandler().getSlotLimit(apiaryBreederTileEntity.getEmptyJarSlots()[finalI]);
+                        return getApiaryBreederTileEntity().getTileStackHandler().getSlotLimit(getEmptyJarSlots()[finalI]);
                     }
 
                     @Override
                     public boolean mayPlace(ItemStack stack) {
-                        return getApiaryBreederTileEntity().getTileStackHandler().isItemValid(apiaryBreederTileEntity.getEmptyJarSlots()[finalI], stack);
+                        return getApiaryBreederTileEntity().getTileStackHandler().isItemValid(getEmptyJarSlots()[finalI], stack);
                     }
                 });
             }
 
             for (int i = 0; i < 3; ++i) {
                 for (int j = 0; j < 9; ++j) {
-                    this.addSlot(new Slot(getPlayerInventory(), j + i * 9 + 9, 33 + j * 18, 28 + (this.breedersize * 20) + (i * 18)));
+                    this.addSlot(new Slot(getPlayerInventory(), j + i * 9 + 9, 33 + j * 18, 28 + (getNumberOfBreeders() * 20) + (i * 18)));
                 }
             }
 
             for (int k = 0; k < 9; ++k) {
-                this.addSlot(new Slot(getPlayerInventory(), k, 33 + k * 18, 86 + this.breedersize * 20));
+                this.addSlot(new Slot(getPlayerInventory(), k, 33 + k * 18, 86 + getNumberOfBreeders() * 20));
             }
 
             this.setRebuild(rebuild);
         }
     }
 
-    @Nonnull
-    @Override
-    public ItemStack quickMoveStack(@Nonnull PlayerEntity playerIn, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasItem()) {
-            ItemStack itemstack1 = slot.getItem();
-            itemstack = itemstack1.copy();
-            if (index < 4 + this.breedersize * 5) {
-                if (!this.moveItemStackTo(itemstack1, 4 + this.breedersize * 5, slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.moveItemStackTo(itemstack1, 0, 4 + this.breedersize * 5, false)) {
-                return ItemStack.EMPTY;
-            }
+    public int getContainerInputEnd() {
+        return 4 + getNumberOfBreeders() * 5;
+    }
 
-            if (itemstack1.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-        }
-        return itemstack;
+    @Override
+    public int getInventoryStart() {
+        return 4 + getNumberOfBreeders() * 5;
     }
 
     public CreativeApiaryBreederTileEntity getApiaryBreederTileEntity() {
@@ -148,6 +137,10 @@ public class CreativeApiaryBreederContainer extends Container {
 
     public PlayerInventory getPlayerInventory() {
         return playerInventory;
+    }
+
+    public int getNumberOfBreeders() {
+        return numberOfBreeders;
     }
 
     public boolean isRebuild() {

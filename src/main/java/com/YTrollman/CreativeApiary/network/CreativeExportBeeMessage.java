@@ -29,17 +29,14 @@ public class CreativeExportBeeMessage {
         return new CreativeExportBeeMessage(buffer.readBlockPos(), buffer.readUtf(100));
     }
 
-    @SuppressWarnings("deprecation")
 	public static void handle(CreativeExportBeeMessage message, Supplier<NetworkEvent.Context> context){
         context.get().enqueueWork(() -> {
             ServerPlayerEntity player = context.get().getSender();
-            if (player != null) {
-                if (player.level.hasChunkAt(message.pos)) {
-                    TileEntity tileEntity = player.level.getBlockEntity(message.pos);
-                    if (tileEntity instanceof CreativeApiaryTileEntity) {
-                        CreativeApiaryTileEntity apiaryTileEntity = (CreativeApiaryTileEntity) tileEntity;
-                        apiaryTileEntity.exportBee(player, message.beeType);
-                    }
+            if (player != null && player.level.isLoaded(message.pos)) {
+                TileEntity tileEntity = player.level.getBlockEntity(message.pos);
+                if (tileEntity instanceof CreativeApiaryTileEntity) {
+                    CreativeApiaryTileEntity apiaryTileEntity = (CreativeApiaryTileEntity) tileEntity;
+                    apiaryTileEntity.exportBee(player, message.beeType);
                 }
             }
         });

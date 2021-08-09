@@ -1,13 +1,5 @@
 package com.YTrollman.CreativeApiary.tileentity;
 
-import static net.minecraft.inventory.container.Container.consideredTheSameItem;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.YTrollman.CreativeApiary.CreativeApiary;
-import org.antlr.v4.runtime.misc.NotNull;
-
 import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
 import com.YTrollman.CreativeApiary.container.CreativeApiaryStorageContainer;
 import com.YTrollman.CreativeApiary.registry.ModTileEntityTypes;
@@ -26,8 +18,6 @@ import com.resourcefulbees.resourcefulbees.registry.BeeRegistry;
 import com.resourcefulbees.resourcefulbees.registry.ModItems;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.IApiaryMultiblock;
 import com.resourcefulbees.resourcefulbees.utils.BeeInfoUtils;
-import com.resourcefulbees.resourcefulbees.utils.MathUtils;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -57,14 +47,20 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.antlr.v4.runtime.misc.NotNull;
 
-@SuppressWarnings("deprecation")
+import javax.annotation.Nullable;
+
+import static net.minecraft.inventory.container.Container.consideredTheSameItem;
+
 public class CreativeApiaryStorageTileEntity extends TileEntity implements INamedContainerProvider, ITickableTileEntity, IApiaryMultiblock {
 
     private static final IBeeRegistry BEE_REGISTRY = BeeRegistry.getRegistry();
 
     private BlockPos apiaryPos;
     private CreativeApiaryTileEntity apiary;
+
+    private int numberOfSlots = 108;
 
     private final AutomationSensitiveItemStackHandler itemStackHandler = new TileStackHandler(110);
     private final LazyOptional<IItemHandler> lazyOptional = LazyOptional.of(this::getItemStackHandler);
@@ -73,13 +69,13 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         super(ModTileEntityTypes.CREATIVE_APIARY_STORAGE_TILE_ENTITY.get());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public TileEntityType<?> getType() {
         return ModTileEntityTypes.CREATIVE_APIARY_STORAGE_TILE_ENTITY.get();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ITextComponent getDisplayName() {
         return new TranslationTextComponent("gui.creativeapiary.creative_apiary_storage");
@@ -87,7 +83,7 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
 
     @Nullable
     @Override
-    public Container createMenu(int i, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity playerEntity) {
+    public Container createMenu(int i, @NotNull PlayerInventory playerInventory, @NotNull PlayerEntity playerEntity) {
         if (level != null)
             return new CreativeApiaryStorageContainer(i, level, worldPosition, playerInventory);
         return null;
@@ -101,35 +97,29 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
     }
 
     public CreativeApiaryTileEntity getApiary() {
-        if (apiaryPos != null && level != null) {  //validate apiary first
-            TileEntity tile = level.getBlockEntity(apiaryPos); //get apiary pos
-            if (tile instanceof CreativeApiaryTileEntity) { //check tile is an apiary tile
+        if (apiaryPos != null && level != null) {
+            TileEntity tile = level.getBlockEntity(apiaryPos);
+            if (tile instanceof CreativeApiaryTileEntity) {
                 return (CreativeApiaryTileEntity) tile;
             }
         }
         return null;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public boolean validateApiaryLink() {
         apiary = getApiary();
         if (apiary == null || apiary.getStoragePos() == null || !apiary.getStoragePos().equals(this.getBlockPos()) || !apiary.isValidApiary(false)) { //check apiary has storage location equal to this and apiary is valid
-            apiaryPos = null; //if not set these to null
+            apiaryPos = null;
             return false;
         }
         return true;
     }
 
     @Override
-    public void load(@Nonnull BlockState state, @Nonnull CompoundNBT nbt) {
+    public void load(@NotNull BlockState state, @NotNull CompoundNBT nbt) {
         super.load(state, nbt);
         this.loadFromNBT(nbt);
-    }
-
-    @Nonnull
-    @Override
-    public CompoundNBT save(@Nonnull CompoundNBT nbt) {
-        super.save(nbt);
-        return this.saveToNBT(nbt);
     }
 
     public void loadFromNBT(CompoundNBT nbt) {
@@ -137,6 +127,20 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         getItemStackHandler().deserializeNBT(invTag);
         if (nbt.contains(NBTConstants.NBT_APIARY_POS))
             apiaryPos = NBTUtil.readBlockPos(nbt.getCompound(NBTConstants.NBT_APIARY_POS));
+        if (nbt.contains(NBTConstants.NBT_SLOT_COUNT))
+            this.setNumberOfSlots(nbt.getInt(NBTConstants.NBT_SLOT_COUNT));
+    }
+
+    @Override
+    public void handleUpdateTag(@NotNull BlockState state, CompoundNBT tag) {
+        this.load(state, tag);
+    }
+
+    @NotNull
+    @Override
+    public CompoundNBT save(@NotNull CompoundNBT nbt) {
+        super.save(nbt);
+        return this.saveToNBT(nbt);
     }
 
     public CompoundNBT saveToNBT(CompoundNBT nbt) {
@@ -144,20 +148,18 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         nbt.put(NBTConstants.NBT_INVENTORY, inv);
         if (apiaryPos != null)
             nbt.put(NBTConstants.NBT_APIARY_POS, NBTUtil.writeBlockPos(apiaryPos));
+        if (getNumberOfSlots() != 9) {
+            nbt.putInt(NBTConstants.NBT_SLOT_COUNT, getNumberOfSlots());
+        }
         return nbt;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT nbtTagCompound = new CompoundNBT();
         save(nbtTagCompound);
         return nbtTagCompound;
-    }
-
-    @Override
-    public void handleUpdateTag(@Nonnull BlockState state, CompoundNBT tag) {
-        this.load(state, tag);
     }
 
     @Nullable
@@ -190,26 +192,29 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         ItemStack comb = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? new ItemStack(Items.HONEYCOMB) : ((ICustomBee) entity).getBeeData().getCombStack();
         ItemStack combBlock = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? new ItemStack(Items.HONEYCOMB_BLOCK) : ((ICustomBee) entity).getBeeData().getCombBlockItemStack();
         int[] outputAmounts = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? null : BEE_REGISTRY.getBeeData(beeType).getApiaryOutputAmounts();
+        ApiaryOutput[] outputTypes = !beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? BEE_REGISTRY.getBeeData(beeType).getApiaryOutputsTypes() : BeeInfoUtils.getDefaultApiaryTypes();
 
         switch (apiaryTier) {
 	        case 100:
-	            itemstack = (CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get() == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
-                itemstack.setCount(CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
+	            //itemstack = (CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get() == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+                //itemstack.setCount(CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
+                itemstack = (outputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+                itemstack.setCount(outputAmounts != null && outputAmounts[4] != -1 ? outputAmounts[4] : CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
                 break;
             case 8:
-                itemstack = (Config.T4_APIARY_OUTPUT.get() == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+                itemstack = (outputTypes[3] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
                 itemstack.setCount(outputAmounts != null && outputAmounts[3] != -1 ? outputAmounts[3] : Config.T4_APIARY_QUANTITY.get());
                 break;
             case 7:
-                itemstack = (Config.T3_APIARY_OUTPUT.get() == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+                itemstack = (outputTypes[2] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
                 itemstack.setCount(outputAmounts != null && outputAmounts[2] != -1 ? outputAmounts[2] : Config.T3_APIARY_QUANTITY.get());
                 break;
             case 6:
-                itemstack = (Config.T2_APIARY_OUTPUT.get() == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+                itemstack = (outputTypes[1] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
                 itemstack.setCount(outputAmounts != null && outputAmounts[1] != -1 ? outputAmounts[1] : Config.T2_APIARY_QUANTITY.get());
                 break;
             default:
-                itemstack = (Config.T1_APIARY_OUTPUT.get() == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+                itemstack = (outputTypes[0] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
                 itemstack.setCount(outputAmounts != null && outputAmounts[0] != -1 ? outputAmounts[0] : Config.T1_APIARY_QUANTITY.get());
                 break;
         }
@@ -246,7 +251,7 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
     }
 
     public boolean inventoryHasSpace() {
-        for (int i = 1; i <= 108; ++i) {
+        for (int i = 1; i <= getNumberOfSlots(); ++i) {
             if (getItemStackHandler().getStackInSlot(i).isEmpty()) {
                 return true;
             }
@@ -257,7 +262,7 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
     public boolean depositItemStack(ItemStack itemstack) {
         int slotIndex = 1;
         while (!itemstack.isEmpty()) {
-            if (slotIndex > 108) {
+            if (slotIndex > getNumberOfSlots()) {
                 break;
             }
             ItemStack slotStack = getItemStackHandler().getStackInSlot(slotIndex);
@@ -323,9 +328,9 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         this.apiaryPos = apiaryPos;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? getLazyOptional().cast() :
                 super.getCapability(cap, side);
     }
@@ -349,6 +354,14 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
                 NetworkHooks.openGui(player, (INamedContainerProvider) tile, apiary.getBreederPos());
             }
         }
+    }
+
+    public int getNumberOfSlots() {
+        return numberOfSlots;
+    }
+
+    public void setNumberOfSlots(int numberOfSlots) {
+        this.numberOfSlots = numberOfSlots;
     }
 
 	public @NotNull AutomationSensitiveItemStackHandler getItemStackHandler() {

@@ -33,13 +33,11 @@ public class CreativeLockBeeMessage {
 	public static void handle(CreativeLockBeeMessage message, Supplier<NetworkEvent.Context> context){
         context.get().enqueueWork(() -> {
             ServerPlayerEntity player = context.get().getSender();
-            if (player != null) {
-                if (player.level.hasChunkAt(message.pos)) {
-                    TileEntity tileEntity = player.level.getBlockEntity(message.pos);
-                    if (tileEntity instanceof CreativeApiaryTileEntity) {
-                        CreativeApiaryTileEntity apiaryTileEntity = (CreativeApiaryTileEntity) tileEntity;
-                        apiaryTileEntity.lockOrUnlockBee(message.beeType);
-                    }
+            if (player != null && player.level.isLoaded(message.pos)) {
+                TileEntity tileEntity = player.level.getBlockEntity(message.pos);
+                if (tileEntity instanceof CreativeApiaryTileEntity) {
+                    CreativeApiaryTileEntity apiaryTileEntity = (CreativeApiaryTileEntity) tileEntity;
+                    apiaryTileEntity.lockOrUnlockBee(message.beeType);
                 }
             }
         });

@@ -26,12 +26,11 @@ public class CreativeImportBeeMessage {
         return new CreativeImportBeeMessage(buffer.readBlockPos());
     }
 
-    @SuppressWarnings("deprecation")
 	public static void handle(CreativeImportBeeMessage message, Supplier<NetworkEvent.Context> context){
         context.get().enqueueWork(() -> {
             ServerPlayerEntity player = context.get().getSender();
             if (player != null) {
-                if (player.level.hasChunkAt(message.pos)) {
+                if (player != null && player.level.isLoaded(message.pos)) {
                     TileEntity tileEntity = player.level.getBlockEntity(message.pos);
                     if (tileEntity instanceof CreativeApiaryTileEntity) {
                         CreativeApiaryTileEntity apiaryTileEntity = (CreativeApiaryTileEntity) tileEntity;

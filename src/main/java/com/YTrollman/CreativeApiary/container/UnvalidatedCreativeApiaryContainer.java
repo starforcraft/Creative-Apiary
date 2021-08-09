@@ -27,7 +27,6 @@ public class UnvalidatedCreativeApiaryContainer extends Container {
         return true;
     }
 
-
     public CreativeApiaryTileEntity getApiaryTileEntity() {
         return apiaryTileEntity;
     }

@@ -35,15 +35,13 @@ public class CreativeValidateApiaryMessage {
     public static void handle(CreativeValidateApiaryMessage message, Supplier<NetworkEvent.Context> context){
         context.get().enqueueWork(() -> {
             ServerPlayerEntity player = context.get().getSender();
-            if (player != null) {
-                if (player.level.isLoaded(message.pos)) {
-                    TileEntity tileEntity = player.level.getBlockEntity(message.pos);
-                    if (tileEntity instanceof CreativeApiaryTileEntity) {
-                    	CreativeApiaryTileEntity apiaryTileEntity = (CreativeApiaryTileEntity) tileEntity;
-                        apiaryTileEntity.setVerticalOffset(message.verticalOffset);
-                        apiaryTileEntity.setHorizontalOffset(message.horizontalOffset);
-                        apiaryTileEntity.runStructureValidation(player);
-                    }
+            if (player != null && player.level.isLoaded(message.pos)) {
+                TileEntity tileEntity = player.level.getBlockEntity(message.pos);
+                if (tileEntity instanceof CreativeApiaryTileEntity) {
+                    CreativeApiaryTileEntity apiaryTileEntity = (CreativeApiaryTileEntity) tileEntity;
+                    apiaryTileEntity.setVerticalOffset(message.verticalOffset);
+                    apiaryTileEntity.setHorizontalOffset(message.horizontalOffset);
+                    apiaryTileEntity.runStructureValidation(player);
                 }
             }
         });

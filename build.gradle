@@ -40,7 +40,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: "official", version: "${mapping}"
+    mappings channel: "official", version: "${mc_version}"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -108,8 +108,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-1.16.4:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.16.5:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:${jei_version}")
 
     implementation fg.deobf("curse.maven:resourcefulbees-384508:3278109")
     compileOnly 'org.jetbrains:annotations:20.1.0'

@@ -2,13 +2,10 @@ package com.YTrollman.CreativeApiary.container;
 
 import com.YTrollman.CreativeApiary.registry.ModContainers;
 import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryStorageTileEntity;
+import com.resourcefulbees.resourcefulbees.container.ContainerWithStackMove;
 import com.resourcefulbees.resourcefulbees.container.OutputSlot;
-import com.resourcefulbees.resourcefulbees.container.SlotItemHandlerUnconditioned;
-import com.resourcefulbees.resourcefulbees.item.UpgradeItem;
-import com.resourcefulbees.resourcefulbees.lib.NBTConstants;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -16,7 +13,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
-public class CreativeApiaryStorageContainer extends Container {
+public class CreativeApiaryStorageContainer extends ContainerWithStackMove {
 
     private final CreativeApiaryStorageTileEntity apiaryStorageTileEntity;
     private final PlayerInventory playerInventory;
@@ -44,7 +41,7 @@ public class CreativeApiaryStorageContainer extends Container {
     public void setupSlots(boolean rebuild) {
         if (getApiaryStorageTileEntity() != null) {
             this.slots.clear();
-            numberOfSlots = 108;
+            numberOfSlots = getApiaryStorageTileEntity().getNumberOfSlots();
 
             int rows;
             if (getNumberOfSlots() != 108) {
@@ -79,32 +76,14 @@ public class CreativeApiaryStorageContainer extends Container {
         }
     }
 
-
-
-
-    @Nonnull
     @Override
-    public ItemStack quickMoveStack(@Nonnull PlayerEntity playerIn, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasItem()) {
-            ItemStack itemstack1 = slot.getItem();
-            itemstack = itemstack1.copy();
-            if (index <= getNumberOfSlots()) {
-                if (!this.moveItemStackTo(itemstack1, getNumberOfSlots(), slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
-                return ItemStack.EMPTY;
-            }
+    public int getContainerInputEnd() {
+        return 1;
+    }
 
-            if (itemstack1.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-        }
-        return itemstack;
+    @Override
+    public int getInventoryStart() {
+        return 1 + getNumberOfSlots();
     }
 
     public PlayerInventory getPlayerInventory() {

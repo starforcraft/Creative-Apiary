@@ -1,7 +1,5 @@
 package com.YTrollman.CreativeApiary.gui;
 
-import javax.annotation.Nonnull;
-
 import com.YTrollman.CreativeApiary.container.UnvalidatedCreativeApiaryContainer;
 import com.YTrollman.CreativeApiary.network.CreativeBuildApiaryMessage;
 import com.YTrollman.CreativeApiary.network.CreativeNetPacketHandler;
@@ -10,11 +8,9 @@ import com.YTrollman.CreativeApiary.tileentity.CreativeApiaryTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.resourcefulbees.resourcefulbees.ResourcefulBees;
-import com.resourcefulbees.resourcefulbees.client.gui.screen.UnvalidatedApiaryScreen;
 import com.resourcefulbees.resourcefulbees.client.gui.widget.ArrowButton;
 import com.resourcefulbees.resourcefulbees.utils.MathUtils;
 import com.resourcefulbees.resourcefulbees.utils.PreviewHandler;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -30,6 +26,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<UnvalidatedCreativeApiaryContainer> {
 
@@ -44,7 +41,6 @@ public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<Unvalidated
     private ArrowButton leftButton;
     private ArrowButton rightButton;
     private PreviewButton previewButton;
-
 
     public UnvalidatedCreativeApiaryScreen(UnvalidatedCreativeApiaryContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
@@ -66,19 +62,11 @@ public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<Unvalidated
             setPreviewToggle();
             previewSetToggle(this.previewButton.isTriggered());
         }));
-        this.previewSetToggle(this.previewButton.isTriggered());
-        this.upButton = this.addButton(new ArrowButton(this.getGuiLeft() + 22, this.getGuiTop() + 12, com.resourcefulbees.resourcefulbees.client.gui.widget.ArrowButton.Direction.UP, (onPress) -> {
-            this.offsetPosition(UnvalidatedCreativeApiaryScreen.Direction.UP);
-        }));
-        this.downButton = this.addButton(new ArrowButton(this.getGuiLeft() + 22, this.getGuiTop() + 38, com.resourcefulbees.resourcefulbees.client.gui.widget.ArrowButton.Direction.DOWN, (onPress) -> {
-            this.offsetPosition(UnvalidatedCreativeApiaryScreen.Direction.DOWN);
-        }));
-        this.leftButton = this.addButton(new ArrowButton(this.getGuiLeft() + 9, this.getGuiTop() + 25, com.resourcefulbees.resourcefulbees.client.gui.widget.ArrowButton.Direction.LEFT, (onPress) -> {
-            this.offsetPosition(UnvalidatedCreativeApiaryScreen.Direction.LEFT);
-        }));
-        this.rightButton = this.addButton(new ArrowButton(this.getGuiLeft() + 35, this.getGuiTop() + 25, com.resourcefulbees.resourcefulbees.client.gui.widget.ArrowButton.Direction.RIGHT, (onPress) -> {
-            this.offsetPosition(UnvalidatedCreativeApiaryScreen.Direction.RIGHT);
-        }));
+        previewSetToggle(this.previewButton.isTriggered());
+        this.upButton = this.addButton(new ArrowButton(getGuiLeft() + 22, getGuiTop() + 12, ArrowButton.Direction.UP, onPress -> this.offsetPosition(Direction.UP)));
+        this.downButton = this.addButton(new ArrowButton(getGuiLeft() + 22, getGuiTop() + 38, ArrowButton.Direction.DOWN, onPress -> this.offsetPosition(Direction.DOWN)));
+        this.leftButton = this.addButton(new ArrowButton(getGuiLeft() + 9, getGuiTop() + 25, ArrowButton.Direction.LEFT, onPress -> this.offsetPosition(Direction.LEFT)));
+        this.rightButton = this.addButton(new ArrowButton(getGuiLeft() + 35, getGuiTop() + 25, ArrowButton.Direction.RIGHT, onPress -> this.offsetPosition(Direction.RIGHT)));
     }
 
     private void previewSetToggle(boolean toggled) {
@@ -123,14 +111,16 @@ public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<Unvalidated
     }
 
     @Override
-    public void render(@Nonnull MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
-        this.upButton.active = verticalOffset != 2;
-        this.downButton.active = verticalOffset != -1;
-        this.leftButton.active = horizontalOffset != -2;
-        this.rightButton.active = horizontalOffset != 2;
-        this.renderBackground(matrix);
-        super.render(matrix, mouseX, mouseY, partialTicks);
-        this.renderTooltip(matrix, mouseX, mouseY);
+    public void render(@NotNull MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
+        if (apiaryTileEntity != null) {
+            this.upButton.active = verticalOffset != 2;
+            this.downButton.active = verticalOffset != -1;
+            this.leftButton.active = horizontalOffset != -2;
+            this.rightButton.active = horizontalOffset != 2;
+            this.renderBackground(matrix);
+            super.render(matrix, mouseX, mouseY, partialTicks);
+            this.renderTooltip(matrix, mouseX, mouseY);
+        }
     }
 
     private void validate() {
@@ -141,7 +131,7 @@ public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<Unvalidated
     }
 
     @Override
-    protected void renderBg(@Nonnull MatrixStack matrix, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(@NotNull MatrixStack matrix, float partialTicks, int mouseX, int mouseY) {
         Minecraft client = this.minecraft;
         if (client != null) {
             this.minecraft.getTextureManager().bind(unvalidatedTexture);
@@ -152,7 +142,7 @@ public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<Unvalidated
     }
 
     @Override
-    protected void renderLabels(@Nonnull MatrixStack matrix, int mouseX, int mouseY) {
+    protected void renderLabels(@NotNull MatrixStack matrix, int mouseX, int mouseY) {
         this.font.draw(matrix,  "Offset", 65, 13, 0x404040);
         this.font.draw(matrix, "Vert.", 75, 26, 0x404040);
         this.font.draw(matrix, "Horiz.", 75, 39, 0x404040);
@@ -167,8 +157,7 @@ public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<Unvalidated
         }
     }
 
-
-    public void drawRightAlignedString(@Nonnull MatrixStack matrix, FontRenderer fontRenderer, @Nonnull String s, int posX, int posY, int color) {
+    public void drawRightAlignedString(@NotNull MatrixStack matrix, FontRenderer fontRenderer, @NotNull String s, int posX, int posY, int color) {
         fontRenderer.draw(matrix, s, (float) (posX - fontRenderer.width(s)), (float) posY, color);
     }
 
@@ -186,7 +175,7 @@ public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<Unvalidated
         }
 
         @Override
-        public void renderToolTip(@Nonnull MatrixStack matrix, int mouseX, int mouseY) {
+        public void renderToolTip(@NotNull MatrixStack matrix, int mouseX, int mouseY) {
             if (!this.active) {
                 StringTextComponent s = new StringTextComponent(I18n.get("gui.resourcefulbees.apiary.button.build.creative"));
                 UnvalidatedCreativeApiaryScreen.this.renderTooltip(matrix, s, mouseX, mouseY);
@@ -212,7 +201,7 @@ public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<Unvalidated
         }
 
         @Override
-        public void renderButton(@Nonnull MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
+        public void renderButton(@NotNull MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
             Minecraft minecraft = Minecraft.getInstance();
             minecraft.getTextureManager().bind(this.resourceLocation);
             RenderSystem.disableDepthTest();
@@ -235,7 +224,7 @@ public class UnvalidatedCreativeApiaryScreen extends ContainerScreen<Unvalidated
         }
 
         @Override
-        public void renderToolTip(@Nonnull MatrixStack matrix, int mouseX, int mouseY) {
+        public void renderToolTip(@NotNull MatrixStack matrix, int mouseX, int mouseY) {
             StringTextComponent s;
             if (!isTriggered()) {
                 s = new StringTextComponent(I18n.get("gui.resourcefulbees.apiary.button.preview.enable"));
