@@ -1,41 +1,31 @@
 package com.YTrollman.CreativeApiary.tileentity;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.YTrollman.CreativeApiary.CreativeApiary;
+import com.YTrollman.CreativeApiary.block.CreativeApiaryBlock;
 import com.YTrollman.CreativeApiary.block.CreativeApiaryStorageBlock;
 import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
-import com.YTrollman.CreativeApiary.registry.ModBlocks;
-import com.google.common.collect.Lists;
-import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryTileEntity;
-import net.minecraft.tileentity.BeehiveTileEntity;
-import org.antlr.v4.runtime.misc.NotNull;
-
-import com.YTrollman.CreativeApiary.block.CreativeApiaryBlock;
 import com.YTrollman.CreativeApiary.container.UnvalidatedCreativeApiaryContainer;
 import com.YTrollman.CreativeApiary.container.ValidatedCreativeApiaryContainer;
 import com.YTrollman.CreativeApiary.network.CreativeNetPacketHandler;
 import com.YTrollman.CreativeApiary.network.CreativeUpdateClientApiaryMessage;
+import com.YTrollman.CreativeApiary.registry.ModBlocks;
 import com.YTrollman.CreativeApiary.registry.ModTileEntityTypes;
 import com.resourcefulbees.resourcefulbees.api.ICustomBee;
+import com.resourcefulbees.resourcefulbees.block.HoneyGlass;
 import com.resourcefulbees.resourcefulbees.block.multiblocks.apiary.ApiaryBreederBlock;
 import com.resourcefulbees.resourcefulbees.container.AutomationSensitiveItemStackHandler;
 import com.resourcefulbees.resourcefulbees.item.BeeJar;
 import com.resourcefulbees.resourcefulbees.lib.ApiaryTabs;
-import com.resourcefulbees.resourcefulbees.lib.BeeConstants;
 import com.resourcefulbees.resourcefulbees.lib.NBTConstants;
+import com.resourcefulbees.resourcefulbees.mixin.BlockAccessor;
 import com.resourcefulbees.resourcefulbees.registry.ModItems;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.MultiBlockHelper;
+import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.ApiaryTileEntity;
 import com.resourcefulbees.resourcefulbees.tileentity.multiblocks.apiary.IApiaryMultiblock;
 import com.resourcefulbees.resourcefulbees.utils.BeeInfoUtils;
-
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
@@ -66,6 +56,15 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.antlr.v4.runtime.misc.NotNull;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.resourcefulbees.resourcefulbees.lib.BeeConstants.*;
 
@@ -598,8 +597,8 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
 
     private boolean validateBlocks(AtomicBoolean isStructureValid, World worldIn, @Nullable ServerPlayerEntity validatingPlayer) {
         structureBlocks.forEach(pos -> {
-            Block block = worldIn.getBlockState(pos).getBlock();
-            if (block.is(BeeInfoUtils.getValidApiaryTag()) || block instanceof ApiaryBreederBlock || block instanceof CreativeApiaryStorageBlock || block instanceof CreativeApiaryBlock) {
+            Block block =  worldIn.getBlockState(pos).getBlock();
+            if (((BlockAccessor) block).getHasCollision() || block.is(BeeInfoUtils.getValidApiaryTag()) || block instanceof ApiaryBreederBlock || block instanceof CreativeApiaryStorageBlock || block instanceof CreativeApiaryBlock || block instanceof HoneyGlass) {
                 TileEntity tile = worldIn.getBlockEntity(pos);
                 linkStorageAndBreeder(tile);
             } else {
@@ -612,49 +611,52 @@ public class CreativeApiaryTileEntity extends ApiaryTileEntity implements ITicka
         return isStructureValid.get();
     }
 
-
     @Override
     public MutableBoundingBox buildStructureBounds(int horizontalOffset, int verticalOffset) {
-        return MultiBlockHelper.buildStructureBounds(this.getBlockPos(), 7, 6, 7, -horizontalOffset - 3, -verticalOffset - 2, 0, this.getBlockState().getValue(CreativeApiaryBlock.FACING));
+        return MultiBlockHelper.buildStructureBounds(this.getBlockPos(), 7, 5, 7, -horizontalOffset - 3, -verticalOffset - 1, 0, this.getBlockState().getValue(CreativeApiaryBlock.FACING));
     }
 
     private void buildStructureBlockList() {
         if (this.level != null) {
             MutableBoundingBox box = buildStructureBounds(this.getHorizontalOffset(), this.getVerticalOffset());
             structureBlocks.clear();
-            BlockPos.betweenClosedStream(box).forEach((blockPos -> {
-                if (blockPos.getX() == box.x0 || blockPos.getX() == box.x1 ||
-                        blockPos.getY() == box.y0 || blockPos.getY() == box.y1 ||
-                        blockPos.getZ() == box.z0 || blockPos.getZ() == box.z1) {
-                    BlockPos savedPos = new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                    structureBlocks.add(savedPos);
-                }
-            }));
+            BlockPos.betweenClosedStream(box)
+                    .filter(blockPos -> isStructurePosition(blockPos, box))
+                    .forEach((blockPos -> structureBlocks.add(blockPos.immutable())));
         }
     }
 
-    @Override
+    private static boolean isStructurePosition(BlockPos blockPos, MutableBoundingBox box) {
+        return blockPos.getX() == box.x0 ||
+                blockPos.getX() == box.x1 ||
+                blockPos.getY() == box.y1 ||
+                blockPos.getZ() == box.z0 ||
+                blockPos.getZ() == box.z1;
+    }
+
     public void runCreativeBuild(ServerPlayerEntity player) {
         if (this.level != null) {
             buildStructureBlockList();
-            boolean addedStorage = false;
-            for (BlockPos pos : structureBlocks) {
-                Block block = this.level.getBlockState(pos).getBlock();
-                if (!(block instanceof CreativeApiaryBlock)) {
-                    if (addedStorage) {
-                        this.level.setBlockAndUpdate(pos, net.minecraft.block.Blocks.GLASS.defaultBlockState());
-                    } else {
-                        this.level.setBlockAndUpdate(pos, ModBlocks.CREATIVE_APIARY_STORAGE_BLOCK.get().defaultBlockState());
-                        addedStorage = true;
-                    }
-                }
-            }
+            AtomicBoolean addedStorage = new AtomicBoolean(false);
+            structureBlocks.stream()
+                    .filter(this::blockAtPosIsNotApiary)
+                    .forEach(blockPos -> {
+                        if (addedStorage.get()) {
+                            this.level.setBlockAndUpdate(blockPos, Blocks.GLASS.defaultBlockState());
+                        } else {
+                            this.level.setBlockAndUpdate(blockPos, ModBlocks.CREATIVE_APIARY_STORAGE_BLOCK.get().defaultBlockState());
+                            addedStorage.set(true);
+                        }
+                    });
             runStructureValidation(player);
         }
     }
 
-    @Override
-    public boolean linkStorageAndBreeder(TileEntity tile) {
+    private boolean blockAtPosIsNotApiary(BlockPos blockPos) {
+        return this.level != null && !(this.level.getBlockState(blockPos).getBlock() instanceof CreativeApiaryBlock);
+    }
+
+    private boolean linkStorageAndBreeder(TileEntity tile) {
         if (tile instanceof CreativeApiaryStorageTileEntity && apiaryStorage == null && ((CreativeApiaryStorageTileEntity) tile).getApiaryPos() == null) {
             apiaryStorage = (CreativeApiaryStorageTileEntity) tile;
             setStoragePos(apiaryStorage.getBlockPos());
