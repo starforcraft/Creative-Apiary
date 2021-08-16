@@ -62,11 +62,22 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
 
     private int numberOfSlots = 108;
 
+    private int[] apiaryOutputAmounts;
+    private ApiaryOutput[] apiaryOutputTypes;
+
     private final AutomationSensitiveItemStackHandler itemStackHandler = new TileStackHandler(110);
     private final LazyOptional<IItemHandler> lazyOptional = LazyOptional.of(this::getItemStackHandler);
 
     public CreativeApiaryStorageTileEntity() {
         super(ModTileEntityTypes.CREATIVE_APIARY_STORAGE_TILE_ENTITY.get());
+        this.apiaryOutputAmounts = new int[]{
+                Config.T1_APIARY_QUANTITY.get(),
+                Config.T2_APIARY_QUANTITY.get(),
+                Config.T3_APIARY_QUANTITY.get(),
+                Config.T4_APIARY_QUANTITY.get(),
+                CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get()
+        };
+        this.apiaryOutputTypes = getDefaultApiaryTypes();
     }
 
     @NotNull
@@ -106,7 +117,6 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         return null;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
     public boolean validateApiaryLink() {
         apiary = getApiary();
         if (apiary == null || apiary.getStoragePos() == null || !apiary.getStoragePos().equals(this.getBlockPos()) || !apiary.isValidApiary(false)) { //check apiary has storage location equal to this and apiary is valid
@@ -194,12 +204,15 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         int[] outputAmounts = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? null : BEE_REGISTRY.getBeeData(beeType).getApiaryOutputAmounts();
         ApiaryOutput[] outputTypes = !beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? BEE_REGISTRY.getBeeData(beeType).getApiaryOutputsTypes() : BeeInfoUtils.getDefaultApiaryTypes();
 
+        int[] creativeOutputAmounts = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? null : getApiaryOutputAmounts();
+        ApiaryOutput[] creativeOutputTypes = !beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? getApiaryOutputsTypes() : getDefaultApiaryTypes();
+
         switch (apiaryTier) {
 	        case 100:
 	            //itemstack = (CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get() == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
                 //itemstack.setCount(CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
-                itemstack = (outputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
-                itemstack.setCount(outputAmounts != null && outputAmounts[4] != -1 ? outputAmounts[4] : CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
+                itemstack = (creativeOutputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+                itemstack.setCount(creativeOutputAmounts != null && creativeOutputAmounts[4] != -1 ? creativeOutputAmounts[4] : CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
                 break;
             case 8:
                 itemstack = (outputTypes[3] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
@@ -219,6 +232,24 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
                 break;
         }
         depositItemStack(itemstack);
+    }
+
+    public int[] getApiaryOutputAmounts() {
+        return this.apiaryOutputAmounts;
+    }
+
+    public ApiaryOutput[] getApiaryOutputsTypes() {
+        return this.apiaryOutputTypes != null ? this.apiaryOutputTypes : BeeInfoUtils.getDefaultApiaryTypes();
+    }
+
+    public static ApiaryOutput[] getDefaultApiaryTypes() {
+        return new ApiaryOutput[] {
+                Config.T1_APIARY_OUTPUT.get(),
+                Config.T2_APIARY_OUTPUT.get(),
+                Config.T3_APIARY_OUTPUT.get(),
+                Config.T4_APIARY_OUTPUT.get(),
+                CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get()
+        };
     }
 
     public boolean breedComplete(String p1, String p2) {
