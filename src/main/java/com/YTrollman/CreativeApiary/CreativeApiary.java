@@ -30,9 +30,9 @@ public class CreativeApiary
     public CreativeApiary() {	
         RegistryHandler.init();
         
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.client_config);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.common_config);
         
-        Config.loadConfig(Config.client_config, FMLPaths.CONFIGDIR.get().resolve("creativeapiary-client.toml").toString());
+        Config.loadConfig(Config.common_config, FMLPaths.CONFIGDIR.get().resolve("creativeapiary-common.toml").toString());
         
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);

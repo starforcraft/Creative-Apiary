@@ -14,27 +14,27 @@ public class CreativeApiaryConfig {
     public static ForgeConfigSpec.DoubleValue CREATIVE_APIARY_BREEDER_SPEED;
     public static ForgeConfigSpec.IntValue CREATIVE_APIARY_STORAGE_ITEM_MAX_STACK_SIZE;
 
-    public static void init(ForgeConfigSpec.Builder client) {
+    public static void init(ForgeConfigSpec.Builder builder) {
 
-            client.comment("Creative Apiary Options");
+        builder.comment("Creative Apiary Options");
             
-            TCREATIVE_APIARY_OUTPUT = client
-            		.comment("\nTier Creative Apiary Output")
-                    .defineEnum("tierCreativeApiaryOutput", ApiaryOutput.BLOCK, ApiaryOutput.BLOCK, ApiaryOutput.BLOCK);
-            TCREATIVE_APIARY_QUANTITY = client
-            		.comment("\nTier Creative Apiary Quantity \n How many Combs/Blocks per Bees?")
-                    .defineInRange("tierCreativeApiaryQuantity", 100, 1, Integer.MAX_VALUE);
-            TCREATIVE_APIARY_MAX_BEES = client
-                    .comment("\nTier Creative Apiary Max Bees")
-                    .defineInRange("tierCreativeApiaryMaxBees", 100, 1, Integer.MAX_VALUE);
-            TCREATIVE_APIARY_SPEED = client
-                    .comment("\nTier Creative Apiary Max Time in Hive (Value in %) \nFor example 0.7 = 70% reduction")
-                    .defineInRange("tierCreativeApiaryMaxTimeInHive", 1D, 0D, 1D);
-            CREATIVE_APIARY_BREEDER_SPEED = client
-                    .comment("\nCreative Apiary Breeder Speed (Value in %) \nFor example 0.7 = 70% reduction")
-                    .defineInRange("CreativeApiaryBreederSpeed", 1D, 0D, 1D);
-            CREATIVE_APIARY_STORAGE_ITEM_MAX_STACK_SIZE = client
-                    .comment("\nCreative Apiary Breeder Item Max Stack Size")
-                    .defineInRange("CreativeApiaryStorageItemMaxStackSize", 16384, 1, Integer.MAX_VALUE);
+        TCREATIVE_APIARY_OUTPUT = builder
+                .comment("\nTier Creative Apiary Output")
+                .defineEnum("tierCreativeApiaryOutput", ApiaryOutput.BLOCK, ApiaryOutput.BLOCK, ApiaryOutput.BLOCK);
+        TCREATIVE_APIARY_QUANTITY = builder
+                .comment("\nTier Creative Apiary Quantity \n How many Combs/Blocks per Bees?")
+                .defineInRange("tierCreativeApiaryQuantity", 100, 1, Integer.MAX_VALUE);
+        TCREATIVE_APIARY_MAX_BEES = builder
+                .comment("\nTier Creative Apiary Max Bees")
+                .defineInRange("tierCreativeApiaryMaxBees", 100, 1, Integer.MAX_VALUE);
+        TCREATIVE_APIARY_SPEED = builder
+                .comment("\nTier Creative Apiary Max Time in Hive (Value in %) \nFor example 0.7 = 70% reduction")
+                .defineInRange("tierCreativeApiaryMaxTimeInHive", 1D, 0D, 1D);
+        CREATIVE_APIARY_BREEDER_SPEED = builder
+                .comment("\nCreative Apiary Breeder Speed (Value in %) \nFor example 0.7 = 70% reduction")
+                .defineInRange("CreativeApiaryBreederSpeed", 1D, 0D, 1D);
+        CREATIVE_APIARY_STORAGE_ITEM_MAX_STACK_SIZE = builder
+                .comment("\nCreative Apiary Breeder Item Max Stack Size")
+                .defineInRange("CreativeApiaryStorageItemMaxStackSize", 16384, 1, Integer.MAX_VALUE);
     }
 }

@@ -12,14 +12,13 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class Config {
 
-	private static final ForgeConfigSpec.Builder client_builder = new ForgeConfigSpec.Builder();
-	public static final ForgeConfigSpec client_config;
-	
+	private static final ForgeConfigSpec.Builder common_builder = new ForgeConfigSpec.Builder();
+	public static final ForgeConfigSpec common_config;
 	
 	static
 	{
-		CreativeApiaryConfig.init(client_builder);
-		client_config = client_builder.build();
+		CreativeApiaryConfig.init(common_builder);
+		common_config = common_builder.build();
 	}
 	
 	public static void loadConfig(ForgeConfigSpec config, String path)
