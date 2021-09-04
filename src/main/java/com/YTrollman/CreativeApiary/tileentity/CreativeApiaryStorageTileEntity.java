@@ -54,7 +54,6 @@ import javax.annotation.Nullable;
 import static net.minecraft.inventory.container.Container.consideredTheSameItem;
 
 public class CreativeApiaryStorageTileEntity extends TileEntity implements INamedContainerProvider, ITickableTileEntity, IApiaryMultiblock {
-
     private static final IBeeRegistry BEE_REGISTRY = BeeRegistry.getRegistry();
 
     private BlockPos apiaryPos;
@@ -62,7 +61,6 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
 
     private int numberOfSlots = 108;
 
-    private int[] apiaryOutputAmounts;
     private ApiaryOutput[] apiaryOutputTypes;
 
     private final AutomationSensitiveItemStackHandler itemStackHandler = new TileStackHandler(110);
@@ -70,13 +68,6 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
 
     public CreativeApiaryStorageTileEntity() {
         super(ModTileEntityTypes.CREATIVE_APIARY_STORAGE_TILE_ENTITY.get());
-        this.apiaryOutputAmounts = new int[]{
-                Config.T1_APIARY_QUANTITY.get(),
-                Config.T2_APIARY_QUANTITY.get(),
-                Config.T3_APIARY_QUANTITY.get(),
-                Config.T4_APIARY_QUANTITY.get(),
-                CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get()
-        };
         this.apiaryOutputTypes = getDefaultApiaryTypes();
     }
 
@@ -95,16 +86,12 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
     @Nullable
     @Override
     public Container createMenu(int i, @NotNull PlayerInventory playerInventory, @NotNull PlayerEntity playerEntity) {
-        if (level != null)
-            return new CreativeApiaryStorageContainer(i, level, worldPosition, playerInventory);
-        return null;
+        return level == null ? null : new CreativeApiaryStorageContainer(i, level, worldPosition, playerInventory);
     }
 
     @Override
     public void tick() {
-        if (level != null && !level.isClientSide) {
-            validateApiaryLink();
-        }
+        if (level != null && !level.isClientSide) validateApiaryLink();
     }
 
     public CreativeApiaryTileEntity getApiary() {
@@ -202,17 +189,17 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         ItemStack comb = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? new ItemStack(Items.HONEYCOMB) : ((ICustomBee) entity).getBeeData().getCombStack();
         ItemStack combBlock = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? new ItemStack(Items.HONEYCOMB_BLOCK) : ((ICustomBee) entity).getBeeData().getCombBlockItemStack();
         int[] outputAmounts = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? null : BEE_REGISTRY.getBeeData(beeType).getApiaryOutputAmounts();
-        ApiaryOutput[] outputTypes = !beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? BEE_REGISTRY.getBeeData(beeType).getApiaryOutputsTypes() : BeeInfoUtils.getDefaultApiaryTypes();
-
-        int[] creativeOutputAmounts = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? null : getApiaryOutputAmounts();
-        ApiaryOutput[] creativeOutputTypes = !beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? getApiaryOutputsTypes() : getDefaultApiaryTypes();
+        ApiaryOutput[] outputTypes = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? BeeInfoUtils.getDefaultApiaryTypes() : BEE_REGISTRY.getBeeData(beeType).getApiaryOutputsTypes();
+        ApiaryOutput[] creativeOutputTypes = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? getDefaultApiaryTypes() : getApiaryOutputsTypes();
 
         switch (apiaryTier) {
 	        case 100:
-	            //itemstack = (CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get() == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
-                //itemstack.setCount(CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
                 itemstack = (creativeOutputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
-                itemstack.setCount(creativeOutputAmounts != null && creativeOutputAmounts[4] != -1 ? creativeOutputAmounts[4] : CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
+		if(outputAmounts.length >= 5){
+                	itemstack.setCount(outputAmounts != null && outputAmounts[4] != -1 ? outputAmounts[4] : CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
+		} else {
+                	itemstack.setCount(CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
+		}
                 break;
             case 8:
                 itemstack = (outputTypes[3] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
@@ -234,21 +221,17 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         depositItemStack(itemstack);
     }
 
-    public int[] getApiaryOutputAmounts() {
-        return this.apiaryOutputAmounts;
-    }
-
     public ApiaryOutput[] getApiaryOutputsTypes() {
         return this.apiaryOutputTypes != null ? this.apiaryOutputTypes : BeeInfoUtils.getDefaultApiaryTypes();
     }
 
     public static ApiaryOutput[] getDefaultApiaryTypes() {
         return new ApiaryOutput[] {
-                Config.T1_APIARY_OUTPUT.get(),
-                Config.T2_APIARY_OUTPUT.get(),
-                Config.T3_APIARY_OUTPUT.get(),
-                Config.T4_APIARY_OUTPUT.get(),
-                CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get()
+            Config.T1_APIARY_OUTPUT.get(),
+            Config.T2_APIARY_OUTPUT.get(),
+            Config.T3_APIARY_OUTPUT.get(),
+            Config.T4_APIARY_OUTPUT.get(),
+            CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get()
         };
     }
 
@@ -283,9 +266,7 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
 
     public boolean inventoryHasSpace() {
         for (int i = 1; i <= getNumberOfSlots(); ++i) {
-            if (getItemStackHandler().getStackInSlot(i).isEmpty()) {
-                return true;
-            }
+            if (getItemStackHandler().getStackInSlot(i).isEmpty()) return true;
         }
         return false;
     }
@@ -363,7 +344,7 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? getLazyOptional().cast() :
-                super.getCapability(cap, side);
+            super.getCapability(cap, side);
     }
 
     public AutomationSensitiveItemStackHandler.IAcceptor getAcceptor() {
@@ -404,7 +385,6 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
     }
 
     protected class TileStackHandler extends AutomationSensitiveItemStackHandler {
-
         protected TileStackHandler(int slots) {
             super(slots);
         }
@@ -423,9 +403,7 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
             setChanged();
-            if (slot == 0) {
-                rebuildOpenContainers();
-            }
+            if (slot == 0) rebuildOpenContainers();
         }
     }
 }
