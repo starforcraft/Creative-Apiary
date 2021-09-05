@@ -190,15 +190,21 @@ public class CreativeApiaryStorageTileEntity extends TileEntity implements IName
         ItemStack combBlock = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? new ItemStack(Items.HONEYCOMB_BLOCK) : ((ICustomBee) entity).getBeeData().getCombBlockItemStack();
         int[] outputAmounts = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? null : BEE_REGISTRY.getBeeData(beeType).getApiaryOutputAmounts();
         ApiaryOutput[] outputTypes = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? BeeInfoUtils.getDefaultApiaryTypes() : BEE_REGISTRY.getBeeData(beeType).getApiaryOutputsTypes();
-        ApiaryOutput[] creativeOutputTypes = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? getDefaultApiaryTypes() : getApiaryOutputsTypes();
 
         switch (apiaryTier) {
 	        case 100:
                 itemstack = (creativeOutputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+			
+		if(outputTypes.length >= 5){
+			itemstack = (outputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+		} else {
+                	itemstack = CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get();
+		}
+			
                 if(outputAmounts.length >= 5){
-                            itemstack.setCount(outputAmounts != null && outputAmounts[4] != -1 ? outputAmounts[4] : CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
+                	itemstack.setCount(outputAmounts != null && outputAmounts[4] != -1 ? outputAmounts[4] : CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
                 } else {
-                            itemstack.setCount(CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
+			itemstack.setCount(CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
                 }
                 break;
             case 8:
