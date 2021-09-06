@@ -53,8 +53,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.antlr.v4.runtime.misc.NotNull;
 
 public class CreativeApiaryStorageTileEntity
-  extends TileEntity
-  implements INamedContainerProvider, ITickableTileEntity, IApiaryMultiblock {
+extends TileEntity
+implements INamedContainerProvider,
+ITickableTileEntity,
+IApiaryMultiblock {
 
   private static final IBeeRegistry BEE_REGISTRY = BeeRegistry.getRegistry();
 
@@ -66,46 +68,30 @@ public class CreativeApiaryStorageTileEntity
   private ApiaryOutput[] apiaryOutputTypes;
 
   private final AutomationSensitiveItemStackHandler itemStackHandler = new TileStackHandler(
-    110
-  );
-  private final LazyOptional<IItemHandler> lazyOptional = LazyOptional.of(
-    this::getItemStackHandler
-  );
+  110);
+  private final LazyOptional < IItemHandler > lazyOptional = LazyOptional.of(
+  this::getItemStackHandler);
 
   public CreativeApiaryStorageTileEntity() {
     super(ModTileEntityTypes.CREATIVE_APIARY_STORAGE_TILE_ENTITY.get());
     this.apiaryOutputTypes = getDefaultApiaryTypes();
   }
 
-  @NotNull
-  @Override
-  public TileEntityType<?> getType() {
+  @NotNull@Override
+  public TileEntityType < ?>getType() {
     return ModTileEntityTypes.CREATIVE_APIARY_STORAGE_TILE_ENTITY.get();
   }
 
-  @NotNull
-  @Override
+  @NotNull@Override
   public ITextComponent getDisplayName() {
-    return new TranslationTextComponent(
-      "gui.creativeapiary.creative_apiary_storage"
-    );
+    return new TranslationTextComponent("gui.creativeapiary.creative_apiary_storage");
   }
 
-  @Nullable
-  @Override
+  @Nullable@Override
   public Container createMenu(
-    int i,
-    @NotNull PlayerInventory playerInventory,
-    @NotNull PlayerEntity playerEntity
-  ) {
-    return level == null
-      ? null
-      : new CreativeApiaryStorageContainer(
-        i,
-        level,
-        worldPosition,
-        playerInventory
-      );
+  int i, @NotNull PlayerInventory playerInventory, @NotNull PlayerEntity playerEntity) {
+    return level == null ? null: new CreativeApiaryStorageContainer(
+    i, level, worldPosition, playerInventory);
   }
 
   @Override
@@ -125,12 +111,7 @@ public class CreativeApiaryStorageTileEntity
 
   public boolean validateApiaryLink() {
     apiary = getApiary();
-    if (
-      apiary == null ||
-      apiary.getStoragePos() == null ||
-      !apiary.getStoragePos().equals(this.getBlockPos()) ||
-      !apiary.isValidApiary(false)
-    ) { //check apiary has storage location equal to this and apiary is valid
+    if (apiary == null || apiary.getStoragePos() == null || !apiary.getStoragePos().equals(this.getBlockPos()) || !apiary.isValidApiary(false)) { //check apiary has storage location equal to this and apiary is valid
       apiaryPos = null;
       return false;
     }
@@ -146,11 +127,8 @@ public class CreativeApiaryStorageTileEntity
   public void loadFromNBT(CompoundNBT nbt) {
     CompoundNBT invTag = nbt.getCompound(NBTConstants.NBT_INVENTORY);
     getItemStackHandler().deserializeNBT(invTag);
-    if (nbt.contains(NBTConstants.NBT_APIARY_POS)) apiaryPos =
-      NBTUtil.readBlockPos(nbt.getCompound(NBTConstants.NBT_APIARY_POS));
-    if (nbt.contains(NBTConstants.NBT_SLOT_COUNT)) this.setNumberOfSlots(
-      nbt.getInt(NBTConstants.NBT_SLOT_COUNT)
-    );
+    if (nbt.contains(NBTConstants.NBT_APIARY_POS)) apiaryPos = NBTUtil.readBlockPos(nbt.getCompound(NBTConstants.NBT_APIARY_POS));
+    if (nbt.contains(NBTConstants.NBT_SLOT_COUNT)) this.setNumberOfSlots(nbt.getInt(NBTConstants.NBT_SLOT_COUNT));
   }
 
   @Override
@@ -158,8 +136,7 @@ public class CreativeApiaryStorageTileEntity
     this.load(state, tag);
   }
 
-  @NotNull
-  @Override
+  @NotNull@Override
   public CompoundNBT save(@NotNull CompoundNBT nbt) {
     super.save(nbt);
     return this.saveToNBT(nbt);
@@ -168,132 +145,68 @@ public class CreativeApiaryStorageTileEntity
   public CompoundNBT saveToNBT(CompoundNBT nbt) {
     CompoundNBT inv = this.getItemStackHandler().serializeNBT();
     nbt.put(NBTConstants.NBT_INVENTORY, inv);
-    if (apiaryPos != null) nbt.put(
-      NBTConstants.NBT_APIARY_POS,
-      NBTUtil.writeBlockPos(apiaryPos)
-    );
+    if (apiaryPos != null) nbt.put(NBTConstants.NBT_APIARY_POS, NBTUtil.writeBlockPos(apiaryPos));
     if (getNumberOfSlots() != 9) {
       nbt.putInt(NBTConstants.NBT_SLOT_COUNT, getNumberOfSlots());
     }
     return nbt;
   }
 
-  @NotNull
-  @Override
+  @NotNull@Override
   public CompoundNBT getUpdateTag() {
     CompoundNBT nbtTagCompound = new CompoundNBT();
     save(nbtTagCompound);
     return nbtTagCompound;
   }
 
-  @Nullable
-  @Override
+  @Nullable@Override
   public SUpdateTileEntityPacket getUpdatePacket() {
     CompoundNBT nbt = new CompoundNBT();
-    if (apiaryPos != null) nbt.put(
-      NBTConstants.NBT_APIARY_POS,
-      NBTUtil.writeBlockPos(apiaryPos)
-    );
+    if (apiaryPos != null) nbt.put(NBTConstants.NBT_APIARY_POS, NBTUtil.writeBlockPos(apiaryPos));
     return new SUpdateTileEntityPacket(worldPosition, 0, nbt);
   }
 
   @Override
   public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
     CompoundNBT nbt = pkt.getTag();
-    if (nbt.contains(NBTConstants.NBT_APIARY_POS)) apiaryPos =
-      NBTUtil.readBlockPos(nbt.getCompound(NBTConstants.NBT_APIARY_POS));
+    if (nbt.contains(NBTConstants.NBT_APIARY_POS)) apiaryPos = NBTUtil.readBlockPos(nbt.getCompound(NBTConstants.NBT_APIARY_POS));
   }
 
   public void deliverHoneycomb(BeeEntity entity, int apiaryTier) {
     String beeType;
-    if (
-      entity instanceof ICustomBee &&
-      ((ICustomBee) entity).getBeeData().hasHoneycomb()
-    ) {
+    if (entity instanceof ICustomBee && ((ICustomBee) entity).getBeeData().hasHoneycomb()) {
       beeType = ((ICustomBee) entity).getBeeType();
-    } else if (!(entity instanceof ICustomBee)) {
+    } else if (! (entity instanceof ICustomBee)) {
       beeType = BeeConstants.VANILLA_BEE_TYPE;
-    } else {
-      return;
-    }
+    } else return;
 
     ItemStack itemstack;
-    ItemStack comb = beeType.equals(BeeConstants.VANILLA_BEE_TYPE)
-      ? new ItemStack(Items.HONEYCOMB)
-      : ((ICustomBee) entity).getBeeData().getCombStack();
-    ItemStack combBlock = beeType.equals(BeeConstants.VANILLA_BEE_TYPE)
-      ? new ItemStack(Items.HONEYCOMB_BLOCK)
-      : ((ICustomBee) entity).getBeeData().getCombBlockItemStack();
-    int[] outputAmounts = beeType.equals(BeeConstants.VANILLA_BEE_TYPE)
-      ? null
-      : BEE_REGISTRY.getBeeData(beeType).getApiaryOutputAmounts();
-    ApiaryOutput[] outputTypes = beeType.equals(BeeConstants.VANILLA_BEE_TYPE)
-      ? this.getDefaultApiaryTypes()
-      : BEE_REGISTRY.getBeeData(beeType).getApiaryOutputsTypes();
+    ItemStack comb = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? new ItemStack(Items.HONEYCOMB) : ((ICustomBee) entity).getBeeData().getCombStack();
+    ItemStack combBlock = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? new ItemStack(Items.HONEYCOMB_BLOCK) : ((ICustomBee) entity).getBeeData().getCombBlockItemStack();
+    int[] outputAmounts = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? null: BEE_REGISTRY.getBeeData(beeType).getApiaryOutputAmounts();
+    ApiaryOutput[] outputTypes = beeType.equals(BeeConstants.VANILLA_BEE_TYPE) ? this.getDefaultApiaryTypes() : BEE_REGISTRY.getBeeData(beeType).getApiaryOutputsTypes();
 
     switch (apiaryTier) {
-      case 100:
-        if (outputAmounts != null && outputAmounts.length >= 5) {
-          itemstack =
-            (outputTypes[4] == ApiaryOutput.BLOCK)
-              ? combBlock.copy()
-              : comb.copy();
-          itemstack.setCount(
-            outputAmounts[4] != -1
-              ? outputAmounts[4]
-              : CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get()
-          );
-        } else {
-          itemstack = CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get();
-          itemstack.setCount(
-            CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get()
-          );
-        }
-        break;
-      case 8:
-        itemstack =
-          (outputTypes[3] == ApiaryOutput.BLOCK)
-            ? combBlock.copy()
-            : comb.copy();
-        itemstack.setCount(
-          outputAmounts != null && outputAmounts[3] != -1
-            ? outputAmounts[3]
-            : Config.T4_APIARY_QUANTITY.get()
-        );
-        break;
-      case 7:
-        itemstack =
-          (outputTypes[2] == ApiaryOutput.BLOCK)
-            ? combBlock.copy()
-            : comb.copy();
-        itemstack.setCount(
-          outputAmounts != null && outputAmounts[2] != -1
-            ? outputAmounts[2]
-            : Config.T3_APIARY_QUANTITY.get()
-        );
-        break;
-      case 6:
-        itemstack =
-          (outputTypes[1] == ApiaryOutput.BLOCK)
-            ? combBlock.copy()
-            : comb.copy();
-        itemstack.setCount(
-          outputAmounts != null && outputAmounts[1] != -1
-            ? outputAmounts[1]
-            : Config.T2_APIARY_QUANTITY.get()
-        );
-        break;
-      default:
-        itemstack =
-          (outputTypes[0] == ApiaryOutput.BLOCK)
-            ? combBlock.copy()
-            : comb.copy();
-        itemstack.setCount(
-          outputAmounts != null && outputAmounts[0] != -1
-            ? outputAmounts[0]
-            : Config.T1_APIARY_QUANTITY.get()
-        );
-        break;
+    case 100:
+      itemstack = (outputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : ((outputTypes != null) ? comb.copy() : CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get());
+      itemstack.setCount(outputAmounts[4] == -1 || outputAmounts == null ? CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get() : outputAmounts[4]);
+      break;
+    case 8:
+      itemstack = (outputTypes[3] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+      itemstack.setCount(outputAmounts != null && outputAmounts[3] != -1 ? outputAmounts[3] : Config.T4_APIARY_QUANTITY.get());
+      break;
+    case 7:
+      itemstack = (outputTypes[2] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+      itemstack.setCount(outputAmounts != null && outputAmounts[2] != -1 ? outputAmounts[2] : Config.T3_APIARY_QUANTITY.get());
+      break;
+    case 6:
+      itemstack = (outputTypes[1] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+      itemstack.setCount(outputAmounts != null && outputAmounts[1] != -1 ? outputAmounts[1] : Config.T2_APIARY_QUANTITY.get());
+      break;
+    default:
+      itemstack = (outputTypes[0] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+      itemstack.setCount(outputAmounts != null && outputAmounts[0] != -1 ? outputAmounts[0] : Config.T1_APIARY_QUANTITY.get());
+      break;
     }
     depositItemStack(itemstack);
   }
@@ -311,21 +224,15 @@ public class CreativeApiaryStorageTileEntity
   public boolean breedComplete(String p1, String p2) {
     if (inventoryHasSpace()) {
       CustomBeeData childBeeData = BEE_REGISTRY.getWeightedChild(p1, p2);
-      float breedChance = BeeRegistry
-        .getRegistry()
-        .getBreedChance(p1, p2, childBeeData);
-      EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(
-        childBeeData.getEntityTypeRegistryID()
-      );
+      float breedChance = BeeRegistry.getRegistry().getBreedChance(p1, p2, childBeeData);
+      EntityType < ?>entityType = ForgeRegistries.ENTITIES.getValue(
+      childBeeData.getEntityTypeRegistryID());
 
       if (level != null && entityType != null) {
         Entity entity = entityType.create(level);
         if (entity != null) {
           ICustomBee beeEntity = (ICustomBee) entity;
-          CompoundNBT nbt = BeeInfoUtils.createJarBeeTag(
-            (BeeEntity) beeEntity,
-            NBTConstants.NBT_ENTITY
-          );
+          CompoundNBT nbt = BeeInfoUtils.createJarBeeTag((BeeEntity) beeEntity, NBTConstants.NBT_ENTITY);
           ItemStack beeJar = new ItemStack(ModItems.BEE_JAR.get());
           ItemStack emptyBeeJar = new ItemStack(ModItems.BEE_JAR.get());
           beeJar.setTag(nbt);
@@ -395,20 +302,10 @@ public class CreativeApiaryStorageTileEntity
       float f = 5.0F;
       BlockPos pos = this.worldPosition;
 
-      for (PlayerEntity playerentity : level.getEntitiesOfClass(
-        PlayerEntity.class,
-        new AxisAlignedBB(
-          pos.getX() - f,
-          pos.getY() - f,
-          pos.getZ() - f,
-          (pos.getX() + 1) + f,
-          (pos.getY() + 1) + f,
-          (pos.getZ() + 1) + f
-        )
-      )) {
-        if (
-          playerentity.containerMenu instanceof CreativeApiaryStorageContainer
-        ) {
+      for (PlayerEntity playerentity: level.getEntitiesOfClass(
+      PlayerEntity.class, new AxisAlignedBB(
+      pos.getX() - f, pos.getY() - f, pos.getZ() - f, (pos.getX() + 1) + f, (pos.getY() + 1) + f, (pos.getZ() + 1) + f))) {
+        if (playerentity.containerMenu instanceof CreativeApiaryStorageContainer) {
           CreativeApiaryStorageContainer openContainer = (CreativeApiaryStorageContainer) playerentity.containerMenu;
           CreativeApiaryStorageTileEntity apiaryStorageTileEntity1 = openContainer.getApiaryStorageTileEntity();
           if (apiaryStorageTileEntity1 == this) {
@@ -432,24 +329,17 @@ public class CreativeApiaryStorageTileEntity
     this.apiaryPos = apiaryPos;
   }
 
-  @NotNull
-  @Override
-  public <T> LazyOptional<T> getCapability(
-    @NotNull Capability<T> cap,
-    @Nullable Direction side
-  ) {
-    return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY
-      ? getLazyOptional().cast()
-      : super.getCapability(cap, side);
+  @NotNull@Override
+  public < T > LazyOptional < T > getCapability(@NotNull Capability < T > cap, @Nullable Direction side) {
+    return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? getLazyOptional().cast() : super.getCapability(cap, side);
   }
 
   public AutomationSensitiveItemStackHandler.IAcceptor getAcceptor() {
-    return (slot, stack, automation) ->
-      !automation || (slot == 0 && stack.getItem() instanceof UpgradeItem);
+    return (slot, stack, automation) - >!automation || (slot == 0 && stack.getItem() instanceof UpgradeItem);
   }
 
   public AutomationSensitiveItemStackHandler.IRemover getRemover() {
-    return (slot, automation) -> !automation || slot > 0 && slot <= 110;
+    return (slot, automation) - >!automation || slot > 0 && slot <= 110;
   }
 
   @Override
@@ -461,10 +351,7 @@ public class CreativeApiaryStorageTileEntity
       } else if (tab == ApiaryTabs.BREED) {
         TileEntity tile = level.getBlockEntity(apiary.getBreederPos());
         NetworkHooks.openGui(
-          player,
-          (INamedContainerProvider) tile,
-          apiary.getBreederPos()
-        );
+        player, (INamedContainerProvider) tile, apiary.getBreederPos());
       }
     }
   }
@@ -477,11 +364,11 @@ public class CreativeApiaryStorageTileEntity
     this.numberOfSlots = numberOfSlots;
   }
 
-  public @NotNull AutomationSensitiveItemStackHandler getItemStackHandler() {
+  public@NotNull AutomationSensitiveItemStackHandler getItemStackHandler() {
     return itemStackHandler;
   }
 
-  public LazyOptional<IItemHandler> getLazyOptional() {
+  public LazyOptional < IItemHandler > getLazyOptional() {
     return lazyOptional;
   }
 
