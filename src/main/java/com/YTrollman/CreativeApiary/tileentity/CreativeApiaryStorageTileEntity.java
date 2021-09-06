@@ -2,6 +2,7 @@ package com.YTrollman.CreativeApiary.tileentity;
 
 import static net.minecraft.inventory.container.Container.consideredTheSameItem;
 
+import com.YTrollman.CreativeApiary.CreativeApiary;
 import com.YTrollman.CreativeApiary.config.CreativeApiaryConfig;
 import com.YTrollman.CreativeApiary.container.CreativeApiaryStorageContainer;
 import com.YTrollman.CreativeApiary.registry.ModTileEntityTypes;
@@ -188,7 +189,7 @@ IApiaryMultiblock {
 
     switch (apiaryTier) {
     case 100:
-      itemstack = (outputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : ((outputTypes != null) ? comb.copy() : CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get());
+      itemstack = (outputTypes != null ? (outputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy() : checkCreativeApiaryOutput(comb, combBlock));
       itemstack.setCount(outputAmounts[4] == -1 || outputAmounts == null ? CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get() : outputAmounts[4]);
       break;
     case 8:
@@ -209,6 +210,18 @@ IApiaryMultiblock {
       break;
     }
     depositItemStack(itemstack);
+  }
+
+  private ItemStack checkCreativeApiaryOutput(ItemStack comb, ItemStack combBlock)
+  {
+    if(CreativeApiaryConfig.TCREATIVE_APIARY_OUTPUT.get() == ApiaryOutput.COMB)
+    {
+      return comb;
+    }
+    else
+    {
+      return combBlock;
+    }
   }
 
   public static ApiaryOutput[] getDefaultApiaryTypes() {
@@ -335,11 +348,11 @@ IApiaryMultiblock {
   }
 
   public AutomationSensitiveItemStackHandler.IAcceptor getAcceptor() {
-    return (slot, stack, automation) - >!automation || (slot == 0 && stack.getItem() instanceof UpgradeItem);
+    return (slot, stack, automation) -> !automation || (slot == 0 && stack.getItem() instanceof UpgradeItem);
   }
 
   public AutomationSensitiveItemStackHandler.IRemover getRemover() {
-    return (slot, automation) - >!automation || slot > 0 && slot <= 110;
+    return (slot, automation) -> !automation || slot > 0 && slot <= 110;
   }
 
   @Override
