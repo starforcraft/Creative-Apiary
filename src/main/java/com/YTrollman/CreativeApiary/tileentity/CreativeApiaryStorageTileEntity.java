@@ -189,8 +189,21 @@ IApiaryMultiblock {
 
     switch (apiaryTier) {
     case 100:
-      itemstack = (outputTypes != null ? (outputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy() : checkCreativeApiaryOutput(comb, combBlock));
-      itemstack.setCount(outputAmounts[4] == -1 || outputAmounts == null ? CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get() : outputAmounts[4]);
+      if(outputTypes != null && outputTypes.length >= 5) {
+        itemstack = (outputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
+      } else {
+        itemstack = checkCreativeApiaryOutput(comb, combBlock);
+      }
+
+      if(outputAmounts != null && outputAmounts.length >= 5){
+        itemstack.setCount(outputAmounts[4] == -1 ? CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get() : outputAmounts[4]);
+      } else {
+        itemstack.setCount(CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get());
+      }
+
+      /*itemstack = (outputTypes != null && outputTypes.length >= 5 ? (outputTypes[4] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy() : checkCreativeApiaryOutput(comb, combBlock));
+      itemstack.setCount(outputAmounts[4] == -1 || outputAmounts == null ? CreativeApiaryConfig.TCREATIVE_APIARY_QUANTITY.get() : outputAmounts[4]);*/
+
       break;
     case 8:
       itemstack = (outputTypes[3] == ApiaryOutput.BLOCK) ? combBlock.copy() : comb.copy();
